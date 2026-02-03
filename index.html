@@ -96,6 +96,7 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
 #shapeCatcherScreen { background:linear-gradient(180deg,#4FC3F7 0%,#B3E5FC 60%,#E8F5E9 100%); }
 .shape-target-display { display:flex; flex-direction:column; align-items:center; gap:4px; position:absolute; top:48px; left:50%; transform:translateX(-50%); z-index:51; }
 .shape-target-display .shape-target-label { font-size:clamp(.9rem,3vw,1.1rem); font-weight:700; color:rgba(255,255,255,.9); text-shadow:1px 1px 0 rgba(0,0,0,.15); }
+.shape-target-display.new-target { animation:targetFlash .8s ease-out; }
 .falling-shape {
   position:absolute; cursor:pointer; transition:transform .15s;
   filter:drop-shadow(2px 4px 3px rgba(0,0,0,.15));
@@ -196,13 +197,13 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
   border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
   display:flex; align-items:center; justify-content:center;
   font-size:clamp(1.6rem,5vw,2.2rem); font-weight:800; color:#fff;
-  text-shadow:1px 1px 0 rgba(0,0,0,.2); position:relative;
+  text-shadow:1px 1px 0 rgba(0,0,0,.4), 0 0 4px rgba(0,0,0,.2); position:relative;
   box-shadow:inset -5px -5px 15px rgba(0,0,0,.1), inset 5px 5px 15px rgba(255,255,255,.3);
 }
 .balloon-body::after {
   content:''; position:absolute; bottom:-12px; left:50%; transform:translateX(-50%);
   width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent;
-  border-top:14px solid currentColor;
+  border-top:14px solid rgba(0,0,0,.25);
 }
 .balloon-body::before {
   content:''; position:absolute; width:25%; height:15%; background:rgba(255,255,255,.4);
@@ -718,8 +719,9 @@ class LearnAndPlay {
     if (this.roundTimer) clearTimeout(this.roundTimer);
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
     if (this.balloonSpawnTimer) clearInterval(this.balloonSpawnTimer);
+    if (this.shapeSpawnTimer) clearInterval(this.shapeSpawnTimer);
     this.gameTimer = null; this.roundTimer = null; this.animFrame = null;
-    this.balloonSpawnTimer = null;
+    this.balloonSpawnTimer = null; this.shapeSpawnTimer = null;
     this.currentGame = null;
     this.shapeAnimating = false;
     this.bugAnimating = false;
@@ -900,35 +902,82 @@ class LearnAndPlay {
   }
 
   // =======================================
-  //  SHAPE CATCHER
+  //  SHAPE CATCHER (continuous flow)
   // =======================================
   startShapes() {
     this.showScreen('shapeCatcherScreen');
-    this.maxRounds = 10;
+    this.maxRounds = 12;
     this.shapeFalling = [];
     this.shapeTarget = null;
-    this.shapeSpawnTimer = 0;
-    this.nextShapeRound();
+    this.shapeSpawnTimer = null;
+    this.shapeHitsOnTarget = 0;
+    this.shapeHitsNeeded = 3;
+    this.pickShapeTarget();
+    this.startShapeFlow();
   }
 
-  nextShapeRound() {
-    if (this.roundCount >= this.maxRounds) { this.endGame('shape'); return; }
+  pickShapeTarget() {
+    let newTarget;
+    do { newTarget = this.shapes[Math.floor(Math.random() * this.shapes.length)]; }
+    while (this.shapeTarget && newTarget.name === this.shapeTarget.name);
+    this.shapeTarget = newTarget;
+    this.shapeHitsOnTarget = 0;
+    this.shapeHitsNeeded = 2 + Math.floor(Math.random() * 2); // 2-3 hits
+
+    const targetDisplay = document.getElementById('shapeTargetDisplay');
+    targetDisplay.innerHTML = this.shapeTarget.svg(60, '#fff') +
+      '<span class="shape-target-label">' + this.shapeTarget.name + '</span>';
+
+    // Flash animation to draw attention
+    targetDisplay.classList.remove('new-target');
+    void targetDisplay.offsetWidth;
+    targetDisplay.classList.add('new-target');
+  }
+
+  startShapeFlow() {
     const area = document.getElementById('shapeArea');
     area.innerHTML = '';
     this.shapeFalling = [];
-    // Pick target
-    this.shapeTarget = this.shapes[Math.floor(Math.random() * this.shapes.length)];
 
-    // Render target shape visually in header
-    const targetDisplay = document.getElementById('shapeTargetDisplay');
-    const targetColor = '#fff';
-    targetDisplay.innerHTML = this.shapeTarget.svg(60, targetColor) +
-      '<span class="shape-target-label">' + this.shapeTarget.name + '</span>';
+    this.shapeAnimating = true;
+    this.spawnShapeWave();
+    this.shapeSpawnTimer = setInterval(() => {
+      if (!this.shapeAnimating) return;
+      this.spawnShapeWave();
+    }, 2500);
 
-    // Spawn shapes
-    const count = Math.min(4 + this.roundCount, 8);
+    const animate = () => {
+      if (!this.shapeAnimating) return;
+      const areaH = area.offsetHeight || window.innerHeight * 0.6;
+      this.shapeFalling.forEach(s => {
+        if (s.dataset.done) return;
+        const y = parseFloat(s.style.top) + parseFloat(s.dataset.speed);
+        s.style.top = y + 'px';
+        if (y > areaH + 20) s.dataset.done = '1';
+      });
+      // Clean up off-screen shapes
+      this.shapeFalling = this.shapeFalling.filter(s => {
+        if (s.dataset.done === '1' && !s.classList.contains('correct-pop')) { s.remove(); return false; }
+        return true;
+      });
+      this.animFrame = requestAnimationFrame(animate);
+    };
+    this.animFrame = requestAnimationFrame(animate);
+  }
+
+  spawnShapeWave() {
+    if (this.roundCount >= this.maxRounds) {
+      this.shapeAnimating = false;
+      if (this.shapeSpawnTimer) clearInterval(this.shapeSpawnTimer);
+      this.endGame('shape');
+      return;
+    }
+
+    const area = document.getElementById('shapeArea');
+    const areaW = window.innerWidth;
+    const size = Math.min(70, Math.max(50, areaW * 0.14));
+    const count = Math.min(3 + Math.floor(this.roundCount / 4), 6);
     const hasTarget = Math.floor(Math.random() * count);
-    const size = Math.min(70, Math.max(50, window.innerWidth * 0.14));
 
     for (let i = 0; i < count; i++) {
       const isTarget = i === hasTarget;
@@ -944,37 +993,15 @@ class LearnAndPlay {
       const el = document.createElement('div');
       el.className = 'falling-shape';
       el.innerHTML = shape.svg(size, color);
-      el.style.left = (Math.random() * (window.innerWidth - size)) + 'px';
-      el.style.top = -(size + Math.random() * 200) + 'px';
+      const spacing = (areaW - size) / count;
+      el.style.left = (i * spacing + Math.random() * (spacing * 0.5)) + 'px';
+      el.style.top = -(size + Math.random() * 80) + 'px';
       el.dataset.name = shape.name;
-      el.dataset.speed = (1.5 + Math.random() * 1.5 + this.roundCount * 0.15).toFixed(2);
+      el.dataset.speed = (1.2 + Math.random() * 1.0 + this.roundCount * 0.1).toFixed(2);
       el.onclick = () => this.tapShape(el);
       area.appendChild(el);
       this.shapeFalling.push(el);
     }
-
-    // Animate
-    this.shapeAnimating = true;
-    const animate = () => {
-      if (!this.shapeAnimating) return;
-      const areaH = area.offsetHeight || window.innerHeight * 0.6;
-      let allGone = true;
-      this.shapeFalling.forEach(s => {
-        if (s.dataset.done) return;
-        const y = parseFloat(s.style.top) + parseFloat(s.dataset.speed);
-        s.style.top = y + 'px';
-        if (y < areaH) allGone = false;
-        else s.dataset.done = '1';
-      });
-      if (allGone) {
-        this.resetStreak();
-        this.roundCount++;
-        setTimeout(() => this.nextShapeRound(), 300);
-        return;
-      }
-      this.animFrame = requestAnimationFrame(animate);
-    };
-    this.animFrame = requestAnimationFrame(animate);
   }
 
   tapShape(el) {
@@ -986,9 +1013,15 @@ class LearnAndPlay {
       this.score++;
       this.addStreak();
       this.roundCount++;
-      this.shapeAnimating = false;
       this.updateScoreDisplay();
-      setTimeout(() => this.nextShapeRound(), 500);
+      this.spawnConfetti(6);
+      setTimeout(() => el.remove(), 400);
+
+      // Check if target should change
+      this.shapeHitsOnTarget++;
+      if (this.shapeHitsOnTarget >= this.shapeHitsNeeded && this.roundCount < this.maxRounds) {
+        setTimeout(() => this.pickShapeTarget(), 300);
+      }
     } else {
       el.classList.add('wrong-shake');
       this.playWrong();
@@ -1019,10 +1052,12 @@ class LearnAndPlay {
 
     document.getElementById('bugPrompt').textContent = 'How many ' + targetType.emoji + ' ?';
 
-    // Create bugs - reserve space for number buttons at bottom (~100px)
+    // Create bugs - measure number buttons to keep bugs above them
     const areaW = window.innerWidth;
     const areaH = area.offsetHeight || Math.max(300, window.innerHeight * 0.5);
-    const safeBottom = 110; // keep bugs above number buttons
+    const numBtns = document.getElementById('bugNumbers');
+    const btnHeight = numBtns ? numBtns.offsetHeight : 0;
+    const safeBottom = Math.max(btnHeight + 20, 130); // always above the white button bar
     const safeTop = 10;
     const allBugs = [];
 
@@ -1048,7 +1083,7 @@ class LearnAndPlay {
       this.bugList.push(el);
     });
 
-    // Animate bugs crawling
+    // Animate bugs crawling - bounce off just above the white button background
     this.bugAnimating = true;
     const animBugs = () => {
       if (!this.bugAnimating) return;
@@ -1057,7 +1092,7 @@ class LearnAndPlay {
         let dx = parseFloat(b.dataset.dx); let dy = parseFloat(b.dataset.dy);
         x += dx; y += dy;
         if (x < 0 || x > areaW - 50) { dx *= -1; b.style.transform = dx < 0 ? 'scaleX(-1)' : 'scaleX(1)'; }
-        if (y < safeTop || y > areaH - safeBottom - 50) dy *= -1;
+        if (y < safeTop || y > areaH - safeBottom) dy *= -1;
         b.style.left = x + 'px'; b.style.top = y + 'px';
         b.dataset.dx = dx; b.dataset.dy = dy;
       });
@@ -1425,7 +1460,7 @@ class LearnAndPlay {
       const body = document.createElement('div');
       body.className = 'balloon-body';
       body.style.background = `radial-gradient(circle at 35% 35%, ${color}88, ${color} 70%, ${color}cc)`;
-      body.style.color = color;
+      body.style.color = '#fff';
       body.textContent = char;
       el.appendChild(body);
 
