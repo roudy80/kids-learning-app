@@ -6,28 +6,32 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Learn & Play!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body { width:100%; height:100%; overflow:hidden; font-family:'Fredoka One','Comic Sans MS','Bubblegum Sans',cursive,sans-serif; touch-action:manipulation; user-select:none; }
+html, body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2','Fredoka One','Comic Sans MS',cursive,sans-serif; touch-action:manipulation; user-select:none; }
 
 :root {
-  --pop-pink:#FF6B9D; --sunny-yellow:#FFD93D; --sky-blue:#6EC6FF; --mint-green:#6BCB77;
-  --grape-purple:#9B59B6; --tangerine:#FF8C42; --coral:#FF6F61; --teal:#1ABC9C;
+  --sunny-yellow:#FFD93D; --sky-blue:#6EC6FF; --mint-green:#6BCB77;
+  --grape-purple:#9B59B6; --bright-orange:#FF8C42; --coral:#FF6F61; --teal:#1ABC9C;
+  --deep-blue:#2196F3; --grass-green:#4CAF50;
 }
 
-/* ── BACKGROUNDS ── */
-body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
+/* -- BACKGROUNDS -- */
+body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
 .screen { display:none; position:absolute; top:0; left:0; width:100%; height:100%; flex-direction:column; align-items:center; }
 .screen.active { display:flex; }
 
-/* ── TITLE SCREEN ── */
+/* -- TITLE SCREEN -- */
 #titleScreen {
   background:linear-gradient(180deg,#4FC3F7 0%,#81D4FA 40%,#B3E5FC 70%,#C8E6C9 85%,#A5D6A7 100%);
   justify-content:center; gap:20px;
 }
-.title-text { font-size:clamp(2.2rem,8vw,4rem); color:#fff; text-shadow:3px 3px 0 var(--pop-pink),-1px -1px 0 var(--grape-purple); text-align:center; animation:bounceTitle 2s ease-in-out infinite; }
+.title-text { font-size:clamp(2.5rem,9vw,4.5rem); font-weight:800; color:#fff; text-shadow:3px 3px 0 var(--bright-orange),-1px -1px 0 var(--deep-blue); text-align:center; animation:bounceTitle 2s ease-in-out infinite; }
 @keyframes bounceTitle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
-.title-sub { font-size:clamp(1rem,4vw,1.5rem); color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,.2); }
+.title-sub { font-size:clamp(1.1rem,4.5vw,1.7rem); font-weight:700; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,.2); }
 .cloud { position:absolute; background:#fff; border-radius:50px; opacity:.8; }
 .cloud::before,.cloud::after { content:''; position:absolute; background:#fff; border-radius:50%; }
 .cloud1 { width:120px; height:40px; top:10%; left:-120px; animation:cloudDrift 20s linear infinite; }
@@ -38,59 +42,60 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 .cloud2::after { width:55px; height:45px; top:-25px; left:35px; }
 @keyframes cloudDrift { from{transform:translateX(0)} to{transform:translateX(calc(100vw + 200px))} }
 
-/* ── BUTTONS ── */
+/* -- BUTTONS -- */
 .btn {
   padding:16px 32px; border:none; border-radius:20px; font-family:inherit;
-  font-size:clamp(1.1rem,4vw,1.5rem); font-weight:700; cursor:pointer;
+  font-size:clamp(1.2rem,4.5vw,1.6rem); font-weight:700; cursor:pointer;
   box-shadow:0 6px 0 rgba(0,0,0,.15),0 8px 20px rgba(0,0,0,.1);
   transition:transform .1s,box-shadow .1s; position:relative; overflow:hidden;
 }
 .btn:active { transform:translateY(3px); box-shadow:0 3px 0 rgba(0,0,0,.15),0 4px 10px rgba(0,0,0,.1); }
-.btn-play { background:linear-gradient(135deg,var(--sunny-yellow),#FFC107); color:#5D4037; min-width:200px; font-size:clamp(1.4rem,5vw,2rem); }
+.btn-play { background:linear-gradient(135deg,var(--sunny-yellow),#FFC107); color:#5D4037; min-width:200px; font-size:clamp(1.5rem,5.5vw,2.2rem); font-weight:800; }
 .btn-game { background:linear-gradient(135deg,#fff,#f0f0f0); color:#333; width:85%; max-width:350px; min-height:80px; display:flex; align-items:center; gap:15px; padding:15px 20px; text-align:left; }
 .btn-game .icon { font-size:2.2rem; min-width:50px; text-align:center; }
 .btn-game .label { display:flex; flex-direction:column; }
-.btn-game .label span:first-child { font-size:clamp(1rem,3.5vw,1.3rem); }
-.btn-game .label span:last-child { font-size:clamp(.7rem,2.5vw,.9rem); font-weight:400; color:#777; }
-.btn-back { position:absolute; top:15px; left:15px; background:rgba(255,255,255,.3); color:#fff; padding:10px 18px; border-radius:15px; font-size:1rem; z-index:100; backdrop-filter:blur(5px); border:none; font-family:inherit; font-weight:700; cursor:pointer; }
-.btn-small { padding:10px 20px; font-size:clamp(.9rem,3vw,1.1rem); border-radius:15px; }
-.btn-pink { background:linear-gradient(135deg,var(--pop-pink),#E91E63); color:#fff; }
+.btn-game .label span:first-child { font-size:clamp(1.1rem,3.8vw,1.4rem); font-weight:700; }
+.btn-game .label span:last-child { font-size:clamp(.8rem,2.8vw,1rem); font-weight:500; color:#777; }
+.btn-back { position:absolute; top:15px; left:15px; background:rgba(255,255,255,.3); color:#fff; padding:10px 18px; border-radius:15px; font-size:1.1rem; font-weight:700; z-index:100; backdrop-filter:blur(5px); border:none; font-family:inherit; cursor:pointer; }
+.btn-small { padding:10px 20px; font-size:clamp(1rem,3.2vw,1.2rem); border-radius:15px; font-weight:700; }
 .btn-blue { background:linear-gradient(135deg,var(--sky-blue),#2196F3); color:#fff; }
 .btn-green { background:linear-gradient(135deg,var(--mint-green),#4CAF50); color:#fff; }
 .btn-purple { background:linear-gradient(135deg,var(--grape-purple),#7B1FA2); color:#fff; }
-.btn-orange { background:linear-gradient(135deg,var(--tangerine),#F57C00); color:#fff; }
+.btn-orange { background:linear-gradient(135deg,var(--bright-orange),#F57C00); color:#fff; }
 
-/* ── MENU SCREEN ── */
+/* -- MENU SCREEN -- */
 #menuScreen {
-  background:linear-gradient(180deg,#E1BEE7 0%,#F3E5F5 50%,#FCE4EC 100%);
-  justify-content:center; gap:14px; padding:20px;
+  background:linear-gradient(180deg,#4FC3F7 0%,#B3E5FC 40%,#C8E6C9 70%,#A5D6A7 100%);
+  justify-content:flex-start; gap:12px; padding:20px; padding-top:30px; overflow-y:auto;
 }
-.menu-title { font-size:clamp(1.5rem,6vw,2.5rem); color:var(--grape-purple); margin-bottom:10px; }
+.menu-title { font-size:clamp(1.6rem,6.5vw,2.6rem); font-weight:800; color:#fff; text-shadow:2px 2px 0 var(--bright-orange); margin-bottom:8px; }
 
-/* ── GAME HEADER ── */
+/* -- GAME HEADER -- */
 .game-header {
   width:100%; padding:60px 15px 10px; display:flex; justify-content:space-between;
   align-items:center; z-index:50; position:relative;
 }
-.game-score { font-size:clamp(1.2rem,4vw,1.6rem); color:#fff; font-weight:700; text-shadow:1px 1px 0 rgba(0,0,0,.2); }
+.game-score { font-size:clamp(1.3rem,4.5vw,1.8rem); font-weight:800; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,.2); }
 .game-prompt {
   position:absolute; top:55px; left:50%; transform:translateX(-50%);
-  font-size:clamp(1.1rem,4vw,1.6rem); color:#fff; font-weight:700;
+  font-size:clamp(1.2rem,4.5vw,1.8rem); font-weight:700; color:#fff;
   text-shadow:2px 2px 0 rgba(0,0,0,.2); text-align:center; white-space:nowrap;
 }
 .streak-display {
   position:absolute; top:12px; right:60px; background:linear-gradient(135deg,#FF6B6B,#FF8E53);
-  color:#fff; padding:4px 12px; border-radius:20px; font-size:.9rem; font-weight:700;
+  color:#fff; padding:4px 12px; border-radius:20px; font-size:1rem; font-weight:700;
   display:none; z-index:100;
 }
 .streak-display.visible { display:block; animation:pulse .5s ease-in-out; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
 
-/* ── GAME AREAS ── */
-.game-area { flex:1; width:100%; position:relative; overflow:hidden; }
+/* -- GAME AREAS -- */
+.game-area { flex:1; width:100%; position:relative; overflow:hidden; min-height:200px; }
 
-/* ── SHAPE CATCHER ── */
+/* -- SHAPE CATCHER -- */
 #shapeCatcherScreen { background:linear-gradient(180deg,#4FC3F7 0%,#B3E5FC 60%,#E8F5E9 100%); }
+.shape-target-display { display:flex; flex-direction:column; align-items:center; gap:4px; position:absolute; top:48px; left:50%; transform:translateX(-50%); z-index:51; }
+.shape-target-display .shape-target-label { font-size:clamp(.9rem,3vw,1.1rem); font-weight:700; color:rgba(255,255,255,.9); text-shadow:1px 1px 0 rgba(0,0,0,.15); }
 .falling-shape {
   position:absolute; cursor:pointer; transition:transform .15s;
   filter:drop-shadow(2px 4px 3px rgba(0,0,0,.15));
@@ -101,7 +106,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 @keyframes correctPop { 0%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.5} 100%{transform:scale(0);opacity:0} }
 @keyframes wrongShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)} 40%{transform:translateX(10px)} 60%{transform:translateX(-10px)} 80%{transform:translateX(5px)} }
 
-/* ── BUG COUNTER ── */
+/* -- BUG COUNTER -- */
 #bugCounterScreen { background:linear-gradient(180deg,#A5D6A7 0%,#C8E6C9 40%,#E8F5E9 70%,#8D6E63 90%,#795548 100%); }
 .bug {
   position:absolute; font-size:clamp(2rem,7vw,3rem); cursor:default;
@@ -115,15 +120,15 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
   position:absolute; bottom:0; width:100%;
 }
 .num-btn {
-  width:60px; height:60px; border-radius:50%; border:3px solid var(--sky-blue);
-  background:#fff; font-size:1.5rem; font-weight:700; color:#333;
+  width:65px; height:65px; border-radius:50%; border:3px solid var(--sky-blue);
+  background:#fff; font-size:1.6rem; font-weight:800; color:#333;
   cursor:pointer; font-family:inherit; transition:transform .1s,background .2s;
 }
 .num-btn:active { transform:scale(.9); }
 .num-btn.correct { background:var(--mint-green); color:#fff; border-color:var(--mint-green); }
 .num-btn.wrong { background:var(--coral); color:#fff; border-color:var(--coral); animation:wrongShake .4s; }
 
-/* ── COLOR SPLASH ── */
+/* -- COLOR SPLASH -- */
 #colorSplashScreen { background:linear-gradient(180deg,#FAFAFA 0%,#F5F5F5 50%,#EEEEEE 100%); }
 .paint-splat {
   position:absolute; border-radius:50%; cursor:pointer;
@@ -134,14 +139,16 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 @keyframes splatPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
 .paint-splat.pop { animation:correctPop .4s forwards; }
 .color-target {
-  width:80px; height:80px; border-radius:50%; border:4px dashed #999;
-  position:absolute; top:90px; left:50%; transform:translateX(-50%);
-  display:flex; align-items:center; justify-content:center;
-  font-size:.8rem; font-weight:700; color:#555; z-index:10;
+  width:120px; height:120px; border-radius:50%; border:5px solid #ccc;
+  position:absolute; top:80px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:1rem; font-weight:700; color:#555; z-index:10;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
 }
+.color-target .color-label { margin-top:4px; font-size:.9rem; font-weight:700; color:#555; }
 .color-target.filled { border-style:solid; animation:pulse .5s; }
 
-/* ── MEMORY BUBBLES ── */
+/* -- MEMORY BUBBLES -- */
 #memoryBubblesScreen { background:linear-gradient(180deg,#1A237E 0%,#283593 40%,#3949AB 100%); }
 .bubble-grid {
   display:grid; gap:10px; padding:15px; width:100%; max-width:400px;
@@ -151,7 +158,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
   width:clamp(55px,18vw,80px); height:clamp(55px,18vw,80px); border-radius:50%;
   background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.5),var(--sky-blue) 60%,#1565C0);
   cursor:pointer; display:flex; align-items:center; justify-content:center;
-  font-size:clamp(1.5rem,5vw,2.2rem); transition:transform .2s,background .3s;
+  font-size:clamp(1.6rem,5.5vw,2.4rem); transition:transform .2s,background .3s;
   box-shadow:0 4px 15px rgba(0,0,0,.3),inset 0 -3px 8px rgba(0,0,0,.1);
   position:relative; overflow:hidden;
 }
@@ -166,12 +173,86 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 @keyframes matchPop { 0%{transform:scale(1)} 30%{transform:scale(1.2)} 100%{transform:scale(1)} }
 .bubble.wrong-reveal { animation:wrongShake .5s; }
 
-/* ── STICKER BOOK ── */
+/* -- BALLOON POP -- */
+#balloonPopScreen { background:linear-gradient(180deg,#4FC3F7 0%,#81D4FA 40%,#B3E5FC 100%); }
+.balloon-target-display {
+  position:absolute; top:50px; left:50%; transform:translateX(-50%); z-index:51;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.balloon-target-char {
+  font-size:clamp(3rem,12vw,5rem); font-weight:800; color:#fff;
+  text-shadow:3px 3px 0 rgba(0,0,0,.2); line-height:1;
+}
+.balloon-target-label {
+  font-size:clamp(.9rem,3vw,1.1rem); font-weight:700; color:rgba(255,255,255,.85);
+}
+.balloon {
+  position:absolute; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:transform .1s;
+}
+.balloon:active { transform:scale(.9); }
+.balloon-body {
+  width:clamp(60px,16vw,80px); height:clamp(75px,20vw,100px);
+  border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(1.6rem,5vw,2.2rem); font-weight:800; color:#fff;
+  text-shadow:1px 1px 0 rgba(0,0,0,.2); position:relative;
+  box-shadow:inset -5px -5px 15px rgba(0,0,0,.1), inset 5px 5px 15px rgba(255,255,255,.3);
+}
+.balloon-body::after {
+  content:''; position:absolute; bottom:-12px; left:50%; transform:translateX(-50%);
+  width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent;
+  border-top:14px solid currentColor;
+}
+.balloon-body::before {
+  content:''; position:absolute; width:25%; height:15%; background:rgba(255,255,255,.4);
+  border-radius:50%; top:18%; left:22%; transform:rotate(-25deg);
+}
+.balloon.pop-anim { animation:balloonPop .4s forwards; }
+@keyframes balloonPop {
+  0%{transform:scale(1);opacity:1}
+  30%{transform:scale(1.4);opacity:.7}
+  100%{transform:scale(0);opacity:0}
+}
+.balloon.wrong-anim { animation:wrongShake .4s; }
+
+/* -- PATTERN BUILDER -- */
+#patternBuilderScreen { background:linear-gradient(180deg,#FFE0B2 0%,#FFF3E0 40%,#FFFDE7 100%); }
+.pattern-display {
+  display:flex; align-items:center; justify-content:center; gap:clamp(6px,2vw,12px);
+  padding:15px; flex-wrap:wrap; min-height:100px;
+}
+.pattern-item {
+  width:clamp(45px,13vw,65px); height:clamp(45px,13vw,65px);
+  display:flex; align-items:center; justify-content:center;
+  border-radius:12px; background:rgba(255,255,255,.8);
+  box-shadow:0 3px 8px rgba(0,0,0,.1);
+}
+.pattern-item.missing {
+  border:3px dashed var(--bright-orange); background:rgba(255,140,66,.1);
+}
+.pattern-item .missing-inner { font-size:clamp(1.5rem,5vw,2.2rem); font-weight:800; color:var(--bright-orange); }
+.pattern-choices {
+  display:flex; gap:clamp(10px,4vw,20px); justify-content:center; padding:20px;
+  position:absolute; bottom:30px; width:100%;
+}
+.pattern-choice {
+  width:clamp(60px,18vw,85px); height:clamp(60px,18vw,85px);
+  border-radius:16px; border:3px solid #ddd; background:#fff; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,.1); transition:transform .15s;
+  font-family:inherit;
+}
+.pattern-choice:active { transform:scale(.9); }
+.pattern-choice.correct-choice { border-color:var(--mint-green); background:#E8F5E9; animation:matchPop .5s; }
+.pattern-choice.wrong-choice { border-color:var(--coral); background:#FFEBEE; animation:wrongShake .4s; }
+
+/* -- STICKER BOOK -- */
 #stickerScreen {
   background:linear-gradient(180deg,#FFF9C4 0%,#FFFDE7 50%,#FFF9C4 100%);
   justify-content:flex-start; padding:70px 15px 20px; gap:15px; overflow-y:auto;
 }
-.sticker-title { font-size:clamp(1.5rem,5vw,2rem); color:#F57F17; }
+.sticker-title { font-size:clamp(1.6rem,5.5vw,2.2rem); font-weight:800; color:#F57F17; }
 .sticker-grid {
   display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
   width:100%; max-width:400px;
@@ -185,27 +266,27 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 .sticker-slot.earned { border-style:solid; border-color:var(--sunny-yellow); background:#fff; animation:stickerEarn .5s; }
 .sticker-slot.empty .inner { filter:grayscale(1) opacity(.2); }
 @keyframes stickerEarn { 0%{transform:scale(0) rotate(-180deg)} 100%{transform:scale(1) rotate(0)} }
-.sticker-count { font-size:clamp(.9rem,3vw,1.1rem); color:#F57F17; font-weight:700; }
+.sticker-count { font-size:clamp(1rem,3.2vw,1.2rem); color:#F57F17; font-weight:700; }
 
-/* ── DAILY CHALLENGE ── */
+/* -- DAILY CHALLENGE -- */
 #dailyScreen {
   background:linear-gradient(180deg,#FF8A65 0%,#FFAB91 50%,#FFCCBC 100%);
   justify-content:center; gap:20px; padding:20px;
 }
-.daily-title { font-size:clamp(1.5rem,5vw,2rem); color:#fff; text-shadow:2px 2px 0 rgba(0,0,0,.15); }
+.daily-title { font-size:clamp(1.6rem,5.5vw,2.2rem); font-weight:800; color:#fff; text-shadow:2px 2px 0 rgba(0,0,0,.15); }
 .daily-card {
   background:#fff; border-radius:25px; padding:25px; width:90%; max-width:350px;
   box-shadow:0 8px 25px rgba(0,0,0,.1); text-align:center;
 }
-.daily-card h3 { color:var(--coral); font-size:clamp(1.2rem,4vw,1.5rem); margin-bottom:10px; }
-.daily-card p { color:#666; font-size:clamp(.9rem,3vw,1.1rem); margin-bottom:20px; line-height:1.4; }
+.daily-card h3 { color:var(--coral); font-size:clamp(1.3rem,4.5vw,1.6rem); font-weight:700; margin-bottom:10px; }
+.daily-card p { color:#666; font-size:clamp(1rem,3.2vw,1.2rem); margin-bottom:20px; line-height:1.4; }
 .daily-reward { font-size:2rem; margin:10px 0; }
 .daily-completed {
   background:var(--mint-green); color:#fff; padding:12px 24px; border-radius:15px;
-  font-size:1.1rem; font-weight:700; display:inline-block;
+  font-size:1.2rem; font-weight:700; display:inline-block;
 }
 
-/* ── BOSS BALLOON ── */
+/* -- BOSS BALLOON -- */
 .boss-balloon {
   position:fixed; z-index:200; cursor:pointer; display:none;
   animation:bossFloat 2s ease-in-out infinite;
@@ -231,7 +312,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 .boss-pop { animation:bossPop .6s forwards; }
 @keyframes bossPop { 0%{transform:scale(1);opacity:1} 30%{transform:scale(1.5);opacity:.8} 100%{transform:scale(0);opacity:0} }
 
-/* ── CONFETTI ── */
+/* -- CONFETTI -- */
 .confetti-piece {
   position:fixed; z-index:300; pointer-events:none;
   width:10px; height:10px; animation:confettiFall 1.5s forwards;
@@ -241,7 +322,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
   100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
 }
 
-/* ── RESULT OVERLAY ── */
+/* -- RESULT OVERLAY -- */
 .result-overlay {
   position:absolute; top:0; left:0; width:100%; height:100%;
   background:rgba(0,0,0,.5); display:none; justify-content:center;
@@ -253,12 +334,12 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
   box-shadow:0 10px 40px rgba(0,0,0,.2); max-width:85%; animation:popIn .4s;
 }
 @keyframes popIn { 0%{transform:scale(0)} 60%{transform:scale(1.1)} 100%{transform:scale(1)} }
-.result-card h2 { font-size:clamp(1.5rem,5vw,2rem); margin-bottom:10px; }
+.result-card h2 { font-size:clamp(1.6rem,5.5vw,2.2rem); font-weight:800; margin-bottom:10px; }
 .result-card .stars { font-size:2.5rem; margin:10px 0; }
-.result-card .score-text { font-size:clamp(1rem,3.5vw,1.3rem); color:#666; margin-bottom:20px; }
+.result-card .score-text { font-size:clamp(1.1rem,3.8vw,1.4rem); font-weight:500; color:#666; margin-bottom:20px; }
 .result-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
-/* ── NEW STICKER POPUP ── */
+/* -- NEW STICKER POPUP -- */
 .sticker-popup {
   position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
   background:#fff; border-radius:30px; padding:30px; text-align:center;
@@ -266,14 +347,16 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 }
 .sticker-popup.show { animation:stickerPopIn .6s forwards; }
 @keyframes stickerPopIn { 0%{transform:translate(-50%,-50%) scale(0) rotate(-30deg)} 60%{transform:translate(-50%,-50%) scale(1.1) rotate(5deg)} 100%{transform:translate(-50%,-50%) scale(1) rotate(0)} }
-.sticker-popup h3 { color:var(--grape-purple); font-size:1.3rem; }
+.sticker-popup h3 { color:var(--grape-purple); font-size:1.4rem; font-weight:700; }
 .sticker-popup .sticker-big { font-size:4rem; margin:15px 0; }
 
-/* ── RESPONSIVE ── */
+/* -- RESPONSIVE -- */
 @media (max-height:600px) {
   .game-header { padding-top:50px; }
   .game-prompt { top:45px; }
   .btn-back { top:10px; left:10px; padding:8px 14px; font-size:.9rem; }
+  .shape-target-display { top:42px; }
+  .balloon-target-display { top:42px; }
 }
 </style>
 </head>
@@ -307,7 +390,15 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
     <span class="icon">&#129531;&#129531;&#129531;</span>
     <span class="label"><span>Memory Bubbles</span><span>Find the matching pairs!</span></span>
   </button>
-  <button class="btn btn-game" onclick="app.showDaily()" style="border-left:4px solid var(--tangerine);">
+  <button class="btn btn-game" onclick="app.startGame('balloons')">
+    <span class="icon">&#127880;&#127880;&#127880;</span>
+    <span class="label"><span>Balloon Pop</span><span>Pop the right balloon!</span></span>
+  </button>
+  <button class="btn btn-game" onclick="app.startGame('pattern')">
+    <span class="icon">&#128309;&#128999;&#128309;</span>
+    <span class="label"><span>Pattern Builder</span><span>Complete the pattern!</span></span>
+  </button>
+  <button class="btn btn-game" onclick="app.showDaily()" style="border-left:4px solid var(--bright-orange);">
     <span class="icon">&#11088;</span>
     <span class="label"><span>Daily Challenge</span><span>New challenge every day!</span></span>
   </button>
@@ -324,7 +415,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
     <div class="game-score" id="shapeScore">Score: 0</div>
     <div class="streak-display" id="shapeStreak">&#128293; 0</div>
   </div>
-  <div class="game-prompt" id="shapePrompt">Catch the circle!</div>
+  <div class="shape-target-display" id="shapeTargetDisplay"></div>
   <div class="game-area" id="shapeArea"></div>
   <div class="result-overlay" id="shapeResult">
     <div class="result-card">
@@ -371,7 +462,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
   </div>
   <div class="game-prompt" id="colorPrompt">Make orange!</div>
   <div class="game-area" id="colorArea">
-    <div class="color-target" id="colorTarget">?</div>
+    <div class="color-target" id="colorTarget"></div>
   </div>
   <div class="result-overlay" id="colorResult">
     <div class="result-card">
@@ -410,6 +501,56 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
   </div>
 </div>
 
+<!-- BALLOON POP -->
+<div id="balloonPopScreen" class="screen">
+  <button class="btn-back" onclick="app.exitGame()">&#9664; Back</button>
+  <div class="game-header">
+    <div class="game-score" id="balloonScore">Score: 0</div>
+    <div class="streak-display" id="balloonStreak">&#128293; 0</div>
+  </div>
+  <div class="balloon-target-display" id="balloonTargetDisplay">
+    <div class="balloon-target-char" id="balloonTargetChar">A</div>
+    <div class="balloon-target-label" id="balloonTargetLabel">Pop this one!</div>
+  </div>
+  <div class="game-area" id="balloonArea"></div>
+  <div class="result-overlay" id="balloonResult">
+    <div class="result-card">
+      <h2 id="balloonResultTitle">Great Job!</h2>
+      <div class="stars" id="balloonResultStars"></div>
+      <div class="score-text" id="balloonResultScore"></div>
+      <div class="result-buttons">
+        <button class="btn btn-small btn-green" onclick="app.startGame('balloons')">Play Again</button>
+        <button class="btn btn-small btn-blue" onclick="app.exitGame()">Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PATTERN BUILDER -->
+<div id="patternBuilderScreen" class="screen">
+  <button class="btn-back" onclick="app.exitGame()">&#9664; Back</button>
+  <div class="game-header">
+    <div class="game-score" id="patternScore">Score: 0</div>
+    <div class="streak-display" id="patternStreak">&#128293; 0</div>
+  </div>
+  <div class="game-prompt" id="patternPrompt">Complete the pattern!</div>
+  <div class="game-area" style="display:flex;flex-direction:column;justify-content:center;align-items:center;">
+    <div class="pattern-display" id="patternDisplay"></div>
+    <div class="pattern-choices" id="patternChoices"></div>
+  </div>
+  <div class="result-overlay" id="patternResult">
+    <div class="result-card">
+      <h2 id="patternResultTitle">Great Job!</h2>
+      <div class="stars" id="patternResultStars"></div>
+      <div class="score-text" id="patternResultScore"></div>
+      <div class="result-buttons">
+        <button class="btn btn-small btn-green" onclick="app.startGame('pattern')">Play Again</button>
+        <button class="btn btn-small btn-blue" onclick="app.exitGame()">Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- STICKER BOOK -->
 <div id="stickerScreen" class="screen">
   <button class="btn-back" onclick="app.showMenu()">&#9664; Back</button>
@@ -434,7 +575,7 @@ body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
 <div class="sticker-popup" id="stickerPopup">
   <h3>New Sticker!</h3>
   <div class="sticker-big" id="stickerPopupIcon"></div>
-  <button class="btn btn-small btn-pink" onclick="app.closeStickerPopup()">Yay!</button>
+  <button class="btn btn-small btn-orange" onclick="app.closeStickerPopup()">Yay!</button>
 </div>
 
 <script>
@@ -460,12 +601,12 @@ class LearnAndPlay {
     this.dailyData = JSON.parse(localStorage.getItem('lp_daily') || '{}');
     this.stats = JSON.parse(localStorage.getItem('lp_stats') || '{"totalGames":0,"totalScore":0}');
 
-    // Sticker definitions
+    // Sticker definitions - using actual unicode emoji
     this.allStickers = [
-      '&#128049;','&#128054;','&#129409;','&#128025;','&#127803;','&#127804;',
-      '&#127800;','&#127807;','&#127775;','&#127774;','&#127752;','&#9728;',
-      '&#128142;','&#128081;','&#127873;','&#128640;','&#127946;','&#128011;',
-      '&#129412;','&#128056;','&#127848;','&#127849;','&#127847;','&#128171;'
+      '\u{1F431}','\u{1F436}','\u{1F981}','\u{1F419}','\u{1F33B}','\u{1F33C}',
+      '\u{1F338}','\u{1F33F}','\u{1F31F}','\u{1F31E}','\u{1F308}','\u2600\uFE0F',
+      '\u{1F48E}','\u{1F451}','\u{1F381}','\u{1F680}','\u{1F3CA}','\u{1F40B}',
+      '\u{1F984}','\u{1F438}','\u{1F370}','\u{1F369}','\u{1F367}','\u{1F4AB}'
     ];
 
     // Shape definitions
@@ -479,13 +620,13 @@ class LearnAndPlay {
     ];
     this.shapeColors = ['#FF6B6B','#4ECDC4','#FFD93D','#6C5CE7','#FF8A5C','#A8E6CF','#FF85A1','#45B7D1'];
 
-    // Bug types
+    // Bug types - using actual unicode emoji
     this.bugTypes = [
-      { name:'ladybug', emoji:'&#128030;' },
-      { name:'butterfly', emoji:'&#129419;' },
-      { name:'bee', emoji:'&#128029;' },
-      { name:'caterpillar', emoji:'&#128027;' },
-      { name:'snail', emoji:'&#128012;' },
+      { name:'ladybug', emoji:'\u{1F41E}' },
+      { name:'butterfly', emoji:'\u{1F98B}' },
+      { name:'bee', emoji:'\u{1F41D}' },
+      { name:'caterpillar', emoji:'\u{1F41B}' },
+      { name:'snail', emoji:'\u{1F40C}' },
     ];
 
     // Color mixing
@@ -503,13 +644,31 @@ class LearnAndPlay {
       { name:'green', hex:'#228B22' },
     ];
 
-    // Memory icons
-    this.memoryIcons = ['&#128054;','&#128049;','&#128037;','&#128053;','&#129409;','&#128025;','&#128012;','&#128011;','&#127803;','&#127800;','&#128142;','&#127775;'];
+    // Memory icons - using actual unicode emoji for reliable comparison
+    this.memoryIcons = [
+      '\u{1F436}','\u{1F431}','\u{1F42D}','\u{1F435}','\u{1F981}','\u{1F419}',
+      '\u{1F40C}','\u{1F40B}','\u{1F33B}','\u{1F338}','\u{1F48E}','\u{1F31F}'
+    ];
+
+    // Balloon pop data
+    this.balloonNumbers = ['0','1','2','3','4','5','6','7','8','9'];
+    this.balloonLetters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+    this.balloonColors = ['#FF6B6B','#4ECDC4','#FFD93D','#6C5CE7','#FF8A5C','#A8E6CF','#FF85A1','#45B7D1','#FF8C42','#6BCB77'];
+
+    // Pattern builder data
+    this.patternShapes = [
+      { name:'circle', color:'#FF6B6B', svg:(s)=>`<svg width="${s}" height="${s}" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#FF6B6B"/></svg>` },
+      { name:'square', color:'#4ECDC4', svg:(s)=>`<svg width="${s}" height="${s}" viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="5" fill="#4ECDC4"/></svg>` },
+      { name:'triangle', color:'#FFD93D', svg:(s)=>`<svg width="${s}" height="${s}" viewBox="0 0 100 100"><polygon points="50,8 92,88 8,88" fill="#FFD93D"/></svg>` },
+      { name:'star', color:'#6C5CE7', svg:(s)=>`<svg width="${s}" height="${s}" viewBox="0 0 100 100"><polygon points="50,5 63,35 95,38 72,60 78,92 50,76 22,92 28,60 5,38 37,35" fill="#6C5CE7"/></svg>` },
+      { name:'heart', color:'#FF85A1', svg:(s)=>`<svg width="${s}" height="${s}" viewBox="0 0 100 100"><path d="M50,85 C25,62 8,48 8,30 C8,15 20,5 33,5 C41,5 47,9 50,15 C53,9 59,5 67,5 C80,5 92,15 92,30 C92,48 75,62 50,85Z" fill="#FF85A1"/></svg>` },
+      { name:'diamond', color:'#45B7D1', svg:(s)=>`<svg width="${s}" height="${s}" viewBox="0 0 100 100"><polygon points="50,8 88,50 50,92 12,50" fill="#45B7D1"/></svg>` },
+    ];
 
     this.updateStickerMenuCount();
   }
 
-  // ── AUDIO ──
+  // -- AUDIO --
   initAudio() {
     if (!this.audioCtx) {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -532,8 +691,9 @@ class LearnAndPlay {
   playWrong() { this.playSound(200,.3,'sawtooth'); }
   playBossPop() { for(let i=0;i<5;i++) setTimeout(()=>this.playSound(400+i*100,.15),i*60); }
   playNewSticker() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.playSound(f,.2),i*120)); }
+  playPop() { this.playSound(600,.1); setTimeout(()=>this.playSound(800,.08),50); }
 
-  // ── NAVIGATION ──
+  // -- NAVIGATION --
   showScreen(id) {
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -553,14 +713,22 @@ class LearnAndPlay {
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
     this.gameTimer = null; this.roundTimer = null; this.animFrame = null;
     this.currentGame = null;
-    // Clear any falling shapes
-    ['shapeArea','bugArea','colorArea'].forEach(id => {
+    this.shapeAnimating = false;
+    this.bugAnimating = false;
+    this.balloonAnimating = false;
+    ['shapeArea','bugArea','colorArea','balloonArea'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.innerHTML = id === 'colorArea' ? '<div class="color-target" id="colorTarget">?</div>' : '';
+      if (el) {
+        if (id === 'colorArea') {
+          el.innerHTML = '<div class="color-target" id="colorTarget"></div>';
+        } else {
+          el.innerHTML = '';
+        }
+      }
     });
   }
 
-  // ── STREAKS ──
+  // -- STREAKS --
   addStreak() {
     this.streak++;
     if (this.streak > this.bestStreak) this.bestStreak = this.streak;
@@ -569,7 +737,7 @@ class LearnAndPlay {
   }
   resetStreak() { this.streak = 0; this.updateStreakDisplay(); }
   updateStreakDisplay() {
-    const games = { shapes:'shapeStreak', bugs:'bugStreak', colors:'colorStreak', memory:'memoryStreak' };
+    const games = { shapes:'shapeStreak', bugs:'bugStreak', colors:'colorStreak', memory:'memoryStreak', balloons:'balloonStreak', pattern:'patternStreak' };
     const el = document.getElementById(games[this.currentGame]);
     if (!el) return;
     if (this.streak >= 2) {
@@ -580,7 +748,7 @@ class LearnAndPlay {
     }
   }
 
-  // ── BOSS BALLOON ──
+  // -- BOSS BALLOON --
   showBoss() {
     this.bossActive = true;
     const boss = document.getElementById('bossBalloon');
@@ -602,11 +770,10 @@ class LearnAndPlay {
       document.getElementById('bossBalloon').classList.remove('active');
       body.classList.remove('boss-pop');
     }, 600);
-    // Award sticker for boss
     this.tryAwardSticker();
   }
 
-  // ── CONFETTI ──
+  // -- CONFETTI --
   spawnConfetti(count) {
     const colors = ['#FF6B6B','#FFD93D','#6EC6FF','#6BCB77','#9B59B6','#FF8C42','#FF6F61'];
     for (let i = 0; i < count; i++) {
@@ -625,10 +792,9 @@ class LearnAndPlay {
     }
   }
 
-  // ── STICKERS ──
+  // -- STICKERS --
   tryAwardSticker() {
     if (this.stickers.length >= this.allStickers.length) return;
-    // 40% chance on boss pop
     if (Math.random() > 0.4) return;
     const available = this.allStickers.filter((_,i) => !this.stickers.includes(i));
     if (!available.length) return;
@@ -650,7 +816,7 @@ class LearnAndPlay {
   showStickerPopup(idx) {
     this.playNewSticker();
     const popup = document.getElementById('stickerPopup');
-    document.getElementById('stickerPopupIcon').innerHTML = this.allStickers[idx];
+    document.getElementById('stickerPopupIcon').textContent = this.allStickers[idx];
     popup.classList.add('show');
   }
   closeStickerPopup() {
@@ -664,7 +830,10 @@ class LearnAndPlay {
       const slot = document.createElement('div');
       const earned = this.stickers.includes(i);
       slot.className = 'sticker-slot ' + (earned ? 'earned' : 'empty');
-      slot.innerHTML = `<span class="inner">${emoji}</span>`;
+      const span = document.createElement('span');
+      span.className = 'inner';
+      span.textContent = emoji;
+      slot.appendChild(span);
       grid.appendChild(slot);
     });
     document.getElementById('stickerCount').textContent = this.stickers.length + ' / ' + this.allStickers.length + ' stickers';
@@ -674,12 +843,12 @@ class LearnAndPlay {
     if (el) el.textContent = this.stickers.length + ' collected';
   }
   updateScoreDisplay() {
-    const games = { shapes:'shapeScore', bugs:'bugScore', colors:'colorScore', memory:'memoryScore' };
+    const games = { shapes:'shapeScore', bugs:'bugScore', colors:'colorScore', memory:'memoryScore', balloons:'balloonScore', pattern:'patternScore' };
     const el = document.getElementById(games[this.currentGame]);
     if (el) el.textContent = (this.currentGame === 'memory' ? 'Moves: ' : 'Score: ') + this.score;
   }
 
-  // ── GAME END ──
+  // -- GAME END --
   endGame(gameKey) {
     const stars = this.score >= 8 ? 3 : this.score >= 5 ? 2 : 1;
     const starStr = '\u2B50'.repeat(stars) + '\u2606'.repeat(3 - stars);
@@ -695,18 +864,16 @@ class LearnAndPlay {
     this.spawnConfetti(stars * 8);
     if (stars >= 2) this.playCorrect();
 
-    // Stats
     this.stats.totalGames++;
     this.stats.totalScore += this.score;
     localStorage.setItem('lp_stats', JSON.stringify(this.stats));
 
-    // Sticker for 3 stars
     if (stars === 3) this.awardSticker();
   }
 
-  // ═══════════════════════════════════
-  //  SHAPE CATCHER
-  // ═══════════════════════════════════
+  // =======================================
+  //  START GAME
+  // =======================================
   startGame(type) {
     this.cleanup();
     this.score = 0; this.streak = 0; this.bestStreak = 0; this.roundCount = 0;
@@ -714,15 +881,19 @@ class LearnAndPlay {
     this.updateScoreDisplay();
     this.updateStreakDisplay();
 
-    // Hide any previous results
     document.querySelectorAll('.result-overlay').forEach(r => r.classList.remove('active'));
 
     if (type === 'shapes') this.startShapes();
     else if (type === 'bugs') this.startBugs();
     else if (type === 'colors') this.startColors();
     else if (type === 'memory') this.startMemory();
+    else if (type === 'balloons') this.startBalloons();
+    else if (type === 'pattern') this.startPattern();
   }
 
+  // =======================================
+  //  SHAPE CATCHER
+  // =======================================
   startShapes() {
     this.showScreen('shapeCatcherScreen');
     this.maxRounds = 10;
@@ -739,7 +910,12 @@ class LearnAndPlay {
     this.shapeFalling = [];
     // Pick target
     this.shapeTarget = this.shapes[Math.floor(Math.random() * this.shapes.length)];
-    document.getElementById('shapePrompt').textContent = 'Catch the ' + this.shapeTarget.name + '!';
+
+    // Render target shape visually in header
+    const targetDisplay = document.getElementById('shapeTargetDisplay');
+    const targetColor = '#fff';
+    targetDisplay.innerHTML = this.shapeTarget.svg(60, targetColor) +
+      '<span class="shape-target-label">' + this.shapeTarget.name + '</span>';
 
     // Spawn shapes
     const count = Math.min(4 + this.roundCount, 8);
@@ -773,7 +949,7 @@ class LearnAndPlay {
     this.shapeAnimating = true;
     const animate = () => {
       if (!this.shapeAnimating) return;
-      const areaH = area.offsetHeight;
+      const areaH = area.offsetHeight || window.innerHeight * 0.6;
       let allGone = true;
       this.shapeFalling.forEach(s => {
         if (s.dataset.done) return;
@@ -783,7 +959,6 @@ class LearnAndPlay {
         else s.dataset.done = '1';
       });
       if (allGone) {
-        // Missed the target
         this.resetStreak();
         this.roundCount++;
         setTimeout(() => this.nextShapeRound(), 300);
@@ -813,9 +988,9 @@ class LearnAndPlay {
     }
   }
 
-  // ═══════════════════════════════════
+  // =======================================
   //  BUG COUNTER
-  // ═══════════════════════════════════
+  // =======================================
   startBugs() {
     this.showScreen('bugCounterScreen');
     this.maxRounds = 10;
@@ -836,9 +1011,9 @@ class LearnAndPlay {
 
     document.getElementById('bugPrompt').textContent = 'How many ' + targetType.name + 's?';
 
-    // Create bugs
+    // Create bugs after a short delay to ensure layout
     const areaW = window.innerWidth;
-    const areaH = area.offsetHeight || 400;
+    const areaH = area.offsetHeight || Math.max(300, window.innerHeight * 0.5);
     const allBugs = [];
 
     for (let i = 0; i < targetCount; i++) allBugs.push({ ...targetType, isTarget: true });
@@ -854,7 +1029,7 @@ class LearnAndPlay {
     allBugs.forEach(bug => {
       const el = document.createElement('div');
       el.className = 'bug';
-      el.innerHTML = bug.emoji;
+      el.textContent = bug.emoji;
       el.style.left = (Math.random() * (areaW - 60) + 10) + 'px';
       el.style.top = (Math.random() * (areaH - 120) + 40) + 'px';
       el.dataset.dx = ((Math.random() - 0.5) * 2).toFixed(2);
@@ -880,15 +1055,22 @@ class LearnAndPlay {
     };
     this.animFrame = requestAnimationFrame(animBugs);
 
-    // Number buttons
+    // Number buttons - FIXED: generate from a proper pool to avoid infinite loop
     const numDiv = document.getElementById('bugNumbers');
     numDiv.innerHTML = '';
-    const answers = new Set([targetCount]);
-    while (answers.size < Math.min(6, 8)) {
-      answers.add(Math.max(1, targetCount + Math.floor(Math.random() * 5) - 2));
+    const answerCount = 6;
+    const pool = [];
+    for (let i = 1; i <= 10; i++) {
+      if (i !== targetCount) pool.push(i);
     }
-    const sorted = [...answers].sort((a, b) => a - b);
-    sorted.forEach(n => {
+    // Shuffle pool
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const answers = [targetCount, ...pool.slice(0, answerCount - 1)];
+    answers.sort((a, b) => a - b);
+    answers.forEach(n => {
       const btn = document.createElement('button');
       btn.className = 'num-btn';
       btn.textContent = n;
@@ -908,7 +1090,6 @@ class LearnAndPlay {
       btn.classList.add('wrong');
       this.playWrong();
       this.resetStreak();
-      // Highlight correct
       document.querySelectorAll('.num-btn').forEach(b => {
         if (parseInt(b.textContent) === correct) b.classList.add('correct');
       });
@@ -918,9 +1099,9 @@ class LearnAndPlay {
     setTimeout(() => this.nextBugRound(), 1000);
   }
 
-  // ═══════════════════════════════════
+  // =======================================
   //  COLOR SPLASH
-  // ═══════════════════════════════════
+  // =======================================
   startColors() {
     this.showScreen('colorSplashScreen');
     this.maxRounds = 8;
@@ -931,7 +1112,6 @@ class LearnAndPlay {
   nextColorRound() {
     if (this.roundCount >= this.maxRounds) { this.endGame('color'); return; }
     const area = document.getElementById('colorArea');
-    // Keep the target div
     area.querySelectorAll('.paint-splat').forEach(s => s.remove());
     this.colorSelected = [];
 
@@ -939,10 +1119,11 @@ class LearnAndPlay {
     this.currentMix = this.colorMixes[Math.floor(Math.random() * this.colorMixes.length)];
     document.getElementById('colorPrompt').textContent = 'Make ' + this.currentMix.result + '!';
 
+    // Show target color filled with result color + label
     const target = document.getElementById('colorTarget');
-    target.style.background = 'rgba(200,200,200,0.3)';
-    target.style.borderColor = '#999';
-    target.textContent = '?';
+    target.style.background = this.currentMix.resultHex;
+    target.style.borderColor = this.currentMix.resultHex;
+    target.innerHTML = '<span class="color-label">' + this.currentMix.result + '</span>';
     target.classList.remove('filled');
 
     // Place paint splats
@@ -981,7 +1162,6 @@ class LearnAndPlay {
   tapColor(el) {
     const color = el.dataset.color;
     if (this.colorSelected.includes(color)) {
-      // Deselect
       this.colorSelected = this.colorSelected.filter(c => c !== color);
       el.classList.remove('selected');
       this.updateColorTarget();
@@ -991,7 +1171,6 @@ class LearnAndPlay {
     el.classList.add('selected');
 
     if (this.colorSelected.length === 2) {
-      // Check if correct
       const needed = [...this.currentMix.ingredients].sort();
       const got = [...this.colorSelected].sort();
       const target = document.getElementById('colorTarget');
@@ -999,7 +1178,7 @@ class LearnAndPlay {
       if (needed[0] === got[0] && needed[1] === got[1]) {
         target.style.background = this.currentMix.resultHex;
         target.style.borderColor = this.currentMix.resultHex;
-        target.textContent = '';
+        target.innerHTML = '';
         target.classList.add('filled');
         this.playCorrect();
         this.score++;
@@ -1013,7 +1192,6 @@ class LearnAndPlay {
         this.resetStreak();
         this.roundCount++;
         this.updateScoreDisplay();
-        // Flash wrong then reset
         document.querySelectorAll('.paint-splat.selected').forEach(s => {
           s.classList.remove('selected');
         });
@@ -1027,20 +1205,22 @@ class LearnAndPlay {
     const target = document.getElementById('colorTarget');
     if (this.colorSelected.length === 1) {
       const c = this.baseColors.find(b => b.name === this.colorSelected[0]);
-      target.style.background = c ? c.hex + '66' : 'rgba(200,200,200,0.3)';
-      target.textContent = this.colorSelected[0];
+      target.style.background = c ? c.hex + '66' : this.currentMix.resultHex;
+      target.innerHTML = '<span class="color-label">' + this.colorSelected[0] + '</span>';
     } else {
-      target.style.background = 'rgba(200,200,200,0.3)';
-      target.textContent = '?';
+      // Reset to show target color
+      target.style.background = this.currentMix.resultHex;
+      target.style.borderColor = this.currentMix.resultHex;
+      target.innerHTML = '<span class="color-label">' + this.currentMix.result + '</span>';
     }
   }
 
-  // ═══════════════════════════════════
+  // =======================================
   //  MEMORY BUBBLES
-  // ═══════════════════════════════════
+  // =======================================
   startMemory() {
     this.showScreen('memoryBubblesScreen');
-    this.score = 0; // moves
+    this.score = 0;
     this.memoryMatched = 0;
     this.memoryFlipped = [];
     this.memoryLocked = false;
@@ -1059,7 +1239,10 @@ class LearnAndPlay {
     cards.forEach((icon, i) => {
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
-      bubble.innerHTML = `<span class="inner">${icon}</span>`;
+      const inner = document.createElement('span');
+      inner.className = 'inner';
+      inner.textContent = icon;
+      bubble.appendChild(inner);
       bubble.dataset.icon = icon;
       bubble.dataset.index = i;
       bubble.onclick = () => this.tapBubble(bubble);
@@ -1084,7 +1267,6 @@ class LearnAndPlay {
 
       const [a, b] = this.memoryFlipped;
       if (a.dataset.icon === b.dataset.icon) {
-        // Match!
         setTimeout(() => {
           a.classList.add('matched');
           b.classList.add('matched');
@@ -1094,14 +1276,12 @@ class LearnAndPlay {
           this.memoryFlipped = [];
           this.memoryLocked = false;
 
-          // Check win
           const total = document.querySelectorAll('#bubbleGrid .bubble').length;
           if (this.memoryMatched >= total) {
             setTimeout(() => this.endGame('memory'), 500);
           }
         }, 300);
       } else {
-        // No match
         setTimeout(() => {
           a.classList.add('wrong-reveal');
           b.classList.add('wrong-reveal');
@@ -1118,15 +1298,228 @@ class LearnAndPlay {
     }
   }
 
-  // ═══════════════════════════════════
+  // =======================================
+  //  BALLOON POP
+  // =======================================
+  startBalloons() {
+    this.showScreen('balloonPopScreen');
+    this.maxRounds = 12;
+    this.balloonAnimating = false;
+    this.balloonList = [];
+    this.balloonRoundType = 'number'; // alternates between 'number' and 'letter'
+    this.nextBalloonRound();
+  }
+
+  nextBalloonRound() {
+    if (this.roundCount >= this.maxRounds) { this.endGame('balloon'); return; }
+    const area = document.getElementById('balloonArea');
+    area.innerHTML = '';
+    this.balloonList = [];
+
+    // Alternate between numbers and letters
+    const isNumber = this.balloonRoundType === 'number';
+    const pool = isNumber ? this.balloonNumbers : this.balloonLetters;
+    this.balloonRoundType = isNumber ? 'letter' : 'number';
+
+    // Pick target
+    const targetChar = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById('balloonTargetChar').textContent = targetChar;
+    document.getElementById('balloonTargetLabel').textContent = isNumber ? 'Pop this number!' : 'Pop this letter!';
+
+    // Create balloons - 4-6 floating up
+    const count = Math.min(4 + Math.floor(this.roundCount / 3), 6);
+    const hasTarget = Math.floor(Math.random() * count);
+    const areaW = area.offsetWidth || window.innerWidth;
+    const areaH = area.offsetHeight || window.innerHeight * 0.6;
+
+    for (let i = 0; i < count; i++) {
+      const isTarget = i === hasTarget;
+      let char;
+      if (isTarget) {
+        char = targetChar;
+      } else {
+        do { char = pool[Math.floor(Math.random() * pool.length)]; }
+        while (char === targetChar);
+      }
+
+      const color = this.balloonColors[Math.floor(Math.random() * this.balloonColors.length)];
+      const el = document.createElement('div');
+      el.className = 'balloon';
+      const spacing = (areaW - 40) / count;
+      el.style.left = (10 + i * spacing + Math.random() * (spacing * 0.4)) + 'px';
+      el.style.top = (areaH + 50 + Math.random() * 150) + 'px';
+
+      const body = document.createElement('div');
+      body.className = 'balloon-body';
+      body.style.background = `radial-gradient(circle at 35% 35%, ${color}88, ${color} 70%, ${color}cc)`;
+      body.style.color = color;
+      body.textContent = char;
+      el.appendChild(body);
+
+      el.dataset.char = char;
+      el.dataset.speed = (1.2 + Math.random() * 1.0 + this.roundCount * 0.1).toFixed(2);
+      el.dataset.wobble = (Math.random() * 2 * Math.PI).toFixed(2);
+      el.onclick = () => this.tapBalloon(el, targetChar);
+      area.appendChild(el);
+      this.balloonList.push(el);
+    }
+
+    // Animate balloons floating up
+    this.balloonAnimating = true;
+    let frame = 0;
+    const animate = () => {
+      if (!this.balloonAnimating) return;
+      frame++;
+      let allGone = true;
+      this.balloonList.forEach(b => {
+        if (b.dataset.done) return;
+        const y = parseFloat(b.style.top) - parseFloat(b.dataset.speed);
+        const wobble = Math.sin(frame * 0.03 + parseFloat(b.dataset.wobble)) * 0.8;
+        const x = parseFloat(b.style.left) + wobble;
+        b.style.top = y + 'px';
+        b.style.left = x + 'px';
+        if (y > -120) allGone = false;
+        else b.dataset.done = '1';
+      });
+      if (allGone) {
+        this.resetStreak();
+        this.roundCount++;
+        setTimeout(() => this.nextBalloonRound(), 300);
+        return;
+      }
+      this.animFrame = requestAnimationFrame(animate);
+    };
+    this.animFrame = requestAnimationFrame(animate);
+  }
+
+  tapBalloon(el, targetChar) {
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    if (el.dataset.char === targetChar) {
+      el.classList.add('pop-anim');
+      this.playPop();
+      this.score++;
+      this.addStreak();
+      this.roundCount++;
+      this.balloonAnimating = false;
+      this.updateScoreDisplay();
+      this.spawnConfetti(10);
+      setTimeout(() => this.nextBalloonRound(), 500);
+    } else {
+      el.classList.add('wrong-anim');
+      this.playWrong();
+      this.resetStreak();
+    }
+  }
+
+  // =======================================
+  //  PATTERN BUILDER
+  // =======================================
+  startPattern() {
+    this.showScreen('patternBuilderScreen');
+    this.maxRounds = 10;
+    this.nextPatternRound();
+  }
+
+  nextPatternRound() {
+    if (this.roundCount >= this.maxRounds) { this.endGame('pattern'); return; }
+
+    const display = document.getElementById('patternDisplay');
+    const choices = document.getElementById('patternChoices');
+    display.innerHTML = '';
+    choices.innerHTML = '';
+
+    // Generate pattern: pick 2-3 shapes for the repeating unit
+    const unitLen = this.roundCount < 4 ? 2 : (this.roundCount < 7 ? 2 + Math.floor(Math.random() * 2) : 3);
+    const available = [...this.patternShapes].sort(() => Math.random() - 0.5).slice(0, unitLen);
+    const unit = available;
+
+    // Repeat the pattern 2-3 times, last item is missing
+    const repeats = unitLen === 2 ? 3 : 2;
+    const fullPattern = [];
+    for (let r = 0; r < repeats; r++) {
+      for (let u = 0; u < unit.length; u++) {
+        fullPattern.push(unit[u]);
+      }
+    }
+
+    // The missing piece is the last item
+    const missingIdx = fullPattern.length - 1;
+    const correctShape = fullPattern[missingIdx];
+    const itemSize = Math.min(45, window.innerWidth * 0.1);
+
+    fullPattern.forEach((shape, i) => {
+      const item = document.createElement('div');
+      item.className = 'pattern-item' + (i === missingIdx ? ' missing' : '');
+      if (i === missingIdx) {
+        item.innerHTML = '<span class="missing-inner">?</span>';
+      } else {
+        item.innerHTML = shape.svg(itemSize);
+      }
+      display.appendChild(item);
+    });
+
+    // Generate choices: correct + 2 wrong
+    const wrongChoices = this.patternShapes.filter(s => s.name !== correctShape.name)
+      .sort(() => Math.random() - 0.5).slice(0, 2);
+    const allChoices = [correctShape, ...wrongChoices].sort(() => Math.random() - 0.5);
+    const choiceSize = Math.min(50, window.innerWidth * 0.12);
+
+    allChoices.forEach(shape => {
+      const btn = document.createElement('button');
+      btn.className = 'pattern-choice';
+      btn.innerHTML = shape.svg(choiceSize);
+      btn.dataset.name = shape.name;
+      btn.onclick = () => this.tapPatternChoice(btn, shape.name, correctShape, missingIdx, itemSize);
+      choices.appendChild(btn);
+    });
+
+    document.getElementById('patternPrompt').textContent = 'Complete the pattern!';
+  }
+
+  tapPatternChoice(btn, choiceName, correctShape, missingIdx, itemSize) {
+    if (btn.dataset.done) return;
+    // Disable all choices
+    document.querySelectorAll('.pattern-choice').forEach(c => c.dataset.done = '1');
+
+    if (choiceName === correctShape.name) {
+      btn.classList.add('correct-choice');
+      // Fill in the missing piece
+      const items = document.querySelectorAll('.pattern-item');
+      const missingItem = items[missingIdx];
+      if (missingItem) {
+        missingItem.classList.remove('missing');
+        missingItem.innerHTML = correctShape.svg(itemSize);
+      }
+      this.playCorrect();
+      this.score++;
+      this.addStreak();
+      this.roundCount++;
+      this.updateScoreDisplay();
+      this.spawnConfetti(6);
+      setTimeout(() => this.nextPatternRound(), 800);
+    } else {
+      btn.classList.add('wrong-choice');
+      this.playWrong();
+      this.resetStreak();
+      this.roundCount++;
+      this.updateScoreDisplay();
+      // Show correct answer briefly
+      document.querySelectorAll('.pattern-choice').forEach(c => {
+        if (c.dataset.name === correctShape.name) c.classList.add('correct-choice');
+      });
+      setTimeout(() => this.nextPatternRound(), 1000);
+    }
+  }
+
+  // =======================================
   //  DAILY CHALLENGE
-  // ═══════════════════════════════════
+  // =======================================
   showDaily() {
     this.showScreen('dailyScreen');
     const today = new Date().toISOString().slice(0, 10);
     const card = document.getElementById('dailyCard');
 
-    // Seed challenge from date
     const seed = today.split('-').reduce((a, b) => a + parseInt(b), 0);
     const challenges = [
       { game:'shapes', title:'Shape Master', desc:'Get 8 or more in Shape Catcher!', target:8 },
@@ -1135,6 +1528,8 @@ class LearnAndPlay {
       { game:'memory', title:'Memory Champ', desc:'Complete Memory Bubbles in under 10 moves!', target:10 },
       { game:'shapes', title:'Perfect Shapes', desc:'Get a perfect 10 in Shape Catcher!', target:10 },
       { game:'bugs', title:'Super Counter', desc:'Get a 5-streak in Bug Counter!', target:5 },
+      { game:'balloons', title:'Balloon Buster', desc:'Get 10 or more in Balloon Pop!', target:10 },
+      { game:'pattern', title:'Pattern Pro', desc:'Get 8 or more in Pattern Builder!', target:8 },
     ];
     const challenge = challenges[seed % challenges.length];
     const completed = this.dailyData.date === today && this.dailyData.completed;
@@ -1142,14 +1537,13 @@ class LearnAndPlay {
     card.innerHTML = `
       <h3>${challenge.title}</h3>
       <p>${challenge.desc}</p>
-      <div class="daily-reward">&#127873;</div>
+      <div class="daily-reward">\u{1F381}</div>
       ${completed
-        ? '<div class="daily-completed">Completed! &#10003;</div>'
+        ? '<div class="daily-completed">Completed! \u2713</div>'
         : `<button class="btn btn-small btn-orange" onclick="app.playDaily('${challenge.game}')">Play!</button>`
       }
     `;
 
-    // Store current challenge info
     this.dailyChallenge = challenge;
     this.dailyDate = today;
   }
@@ -1174,9 +1568,6 @@ class LearnAndPlay {
     }
     this.isDailyChallenge = false;
   }
-
-  // Override endGame to check daily
-  _origEndGame = this.endGame;
 }
 
 // Patch endGame to include daily check
