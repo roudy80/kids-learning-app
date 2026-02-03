@@ -117,7 +117,7 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
 .number-buttons {
   display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
   padding:15px; background:rgba(255,255,255,.9); border-radius:25px 25px 0 0;
-  position:absolute; bottom:0; width:100%;
+  position:absolute; bottom:0; width:100%; z-index:10;
 }
 .num-btn {
   width:65px; height:65px; border-radius:50%; border:3px solid var(--sky-blue);
@@ -215,6 +215,12 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
   100%{transform:scale(0);opacity:0}
 }
 .balloon.wrong-anim { animation:wrongShake .4s; }
+.balloon-target-display.new-target { animation:targetFlash .8s ease-out; }
+@keyframes targetFlash {
+  0%{transform:translateX(-50%) scale(1);} 15%{transform:translateX(-50%) scale(1.6);} 30%{transform:translateX(-50%) scale(1.1);}
+  45%{transform:translateX(-50%) scale(1.4);} 60%{transform:translateX(-50%) scale(1);}
+  0%,20%{filter:drop-shadow(0 0 20px #FFD93D);} 60%,100%{filter:none;}
+}
 
 /* -- PATTERN BUILDER -- */
 #patternBuilderScreen { background:linear-gradient(180deg,#FFE0B2 0%,#FFF3E0 40%,#FFFDE7 100%); }
@@ -711,7 +717,9 @@ class LearnAndPlay {
     if (this.gameTimer) clearInterval(this.gameTimer);
     if (this.roundTimer) clearTimeout(this.roundTimer);
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
+    if (this.balloonSpawnTimer) clearInterval(this.balloonSpawnTimer);
     this.gameTimer = null; this.roundTimer = null; this.animFrame = null;
+    this.balloonSpawnTimer = null;
     this.currentGame = null;
     this.shapeAnimating = false;
     this.bugAnimating = false;
@@ -1009,11 +1017,13 @@ class LearnAndPlay {
     const targetCount = Math.floor(Math.random() * 5) + 1; // 1-5
     const distractorCount = Math.floor(Math.random() * 4) + 1;
 
-    document.getElementById('bugPrompt').textContent = 'How many ' + targetType.name + 's?';
+    document.getElementById('bugPrompt').textContent = 'How many ' + targetType.emoji + ' ?';
 
-    // Create bugs after a short delay to ensure layout
+    // Create bugs - reserve space for number buttons at bottom (~100px)
     const areaW = window.innerWidth;
     const areaH = area.offsetHeight || Math.max(300, window.innerHeight * 0.5);
+    const safeBottom = 110; // keep bugs above number buttons
+    const safeTop = 10;
     const allBugs = [];
 
     for (let i = 0; i < targetCount; i++) allBugs.push({ ...targetType, isTarget: true });
@@ -1031,7 +1041,7 @@ class LearnAndPlay {
       el.className = 'bug';
       el.textContent = bug.emoji;
       el.style.left = (Math.random() * (areaW - 60) + 10) + 'px';
-      el.style.top = (Math.random() * (areaH - 120) + 40) + 'px';
+      el.style.top = (Math.random() * (areaH - safeBottom - safeTop - 50) + safeTop) + 'px';
       el.dataset.dx = ((Math.random() - 0.5) * 2).toFixed(2);
       el.dataset.dy = ((Math.random() - 0.5) * 2).toFixed(2);
       area.appendChild(el);
@@ -1047,7 +1057,7 @@ class LearnAndPlay {
         let dx = parseFloat(b.dataset.dx); let dy = parseFloat(b.dataset.dy);
         x += dx; y += dy;
         if (x < 0 || x > areaW - 50) { dx *= -1; b.style.transform = dx < 0 ? 'scaleX(-1)' : 'scaleX(1)'; }
-        if (y < 30 || y > areaH - 100) dy *= -1;
+        if (y < safeTop || y > areaH - safeBottom - 50) dy *= -1;
         b.style.left = x + 'px'; b.style.top = y + 'px';
         b.dataset.dx = dx; b.dataset.dy = dy;
       });
@@ -1306,31 +1316,94 @@ class LearnAndPlay {
     this.maxRounds = 12;
     this.balloonAnimating = false;
     this.balloonList = [];
-    this.balloonRoundType = 'number'; // alternates between 'number' and 'letter'
-    this.nextBalloonRound();
+    this.balloonRoundType = 'number';
+    this.balloonTargetChar = null;
+    this.balloonPool = null;
+    this.balloonHitsOnTarget = 0;    // correct pops for current target
+    this.balloonHitsNeeded = 3;      // pops before target changes
+    this.balloonSpawnTimer = null;
+    this.balloonFrame = 0;
+    this.pickBalloonTarget();
+    this.startBalloonFlow();
   }
 
-  nextBalloonRound() {
-    if (this.roundCount >= this.maxRounds) { this.endGame('balloon'); return; }
+  pickBalloonTarget() {
+    const isNumber = this.balloonRoundType === 'number';
+    this.balloonPool = isNumber ? this.balloonNumbers : this.balloonLetters;
+    this.balloonRoundType = isNumber ? 'letter' : 'number';
+
+    // Pick a new target different from old one
+    let newTarget;
+    do { newTarget = this.balloonPool[Math.floor(Math.random() * this.balloonPool.length)]; }
+    while (newTarget === this.balloonTargetChar);
+    this.balloonTargetChar = newTarget;
+    this.balloonHitsOnTarget = 0;
+    this.balloonHitsNeeded = 2 + Math.floor(Math.random() * 2); // 2-3 hits per target
+
+    const targetDisplay = document.getElementById('balloonTargetDisplay');
+    document.getElementById('balloonTargetChar').textContent = this.balloonTargetChar;
+    document.getElementById('balloonTargetLabel').textContent = isNumber ? 'Pop this number!' : 'Pop this letter!';
+
+    // Flash animation to draw attention
+    targetDisplay.classList.remove('new-target');
+    void targetDisplay.offsetWidth; // force reflow
+    targetDisplay.classList.add('new-target');
+  }
+
+  startBalloonFlow() {
     const area = document.getElementById('balloonArea');
     area.innerHTML = '';
     this.balloonList = [];
+    this.balloonFrame = 0;
 
-    // Alternate between numbers and letters
-    const isNumber = this.balloonRoundType === 'number';
-    const pool = isNumber ? this.balloonNumbers : this.balloonLetters;
-    this.balloonRoundType = isNumber ? 'letter' : 'number';
+    // Spawn balloons on an interval
+    this.balloonAnimating = true;
+    this.spawnBalloonWave();
+    this.balloonSpawnTimer = setInterval(() => {
+      if (!this.balloonAnimating) return;
+      this.spawnBalloonWave();
+    }, 2800);
 
-    // Pick target
-    const targetChar = pool[Math.floor(Math.random() * pool.length)];
-    document.getElementById('balloonTargetChar').textContent = targetChar;
-    document.getElementById('balloonTargetLabel').textContent = isNumber ? 'Pop this number!' : 'Pop this letter!';
+    // Animation loop
+    const animate = () => {
+      if (!this.balloonAnimating) return;
+      this.balloonFrame++;
+      this.balloonList.forEach(b => {
+        if (b.dataset.done) return;
+        const y = parseFloat(b.style.top) - parseFloat(b.dataset.speed);
+        const wobble = Math.sin(this.balloonFrame * 0.03 + parseFloat(b.dataset.wobble)) * 0.8;
+        const x = parseFloat(b.style.left) + wobble;
+        b.style.top = y + 'px';
+        b.style.left = x + 'px';
+        if (y < -130) b.dataset.done = '1';
+      });
+      // Clean up off-screen balloons
+      this.balloonList = this.balloonList.filter(b => {
+        if (b.dataset.done === '1' && !b.classList.contains('pop-anim')) { b.remove(); return false; }
+        return true;
+      });
+      this.animFrame = requestAnimationFrame(animate);
+    };
+    this.animFrame = requestAnimationFrame(animate);
+  }
 
-    // Create balloons - 4-6 floating up
-    const count = Math.min(4 + Math.floor(this.roundCount / 3), 6);
-    const hasTarget = Math.floor(Math.random() * count);
+  spawnBalloonWave() {
+    if (this.roundCount >= this.maxRounds) {
+      this.balloonAnimating = false;
+      if (this.balloonSpawnTimer) clearInterval(this.balloonSpawnTimer);
+      this.endGame('balloon');
+      return;
+    }
+
+    const area = document.getElementById('balloonArea');
     const areaW = area.offsetWidth || window.innerWidth;
     const areaH = area.offsetHeight || window.innerHeight * 0.6;
+    const pool = this.balloonPool;
+    const targetChar = this.balloonTargetChar;
+
+    const count = Math.min(3 + Math.floor(this.roundCount / 4), 5);
+    // Ensure at least one target balloon per wave
+    const hasTarget = Math.floor(Math.random() * count);
 
     for (let i = 0; i < count; i++) {
       const isTarget = i === hasTarget;
@@ -1347,7 +1420,7 @@ class LearnAndPlay {
       el.className = 'balloon';
       const spacing = (areaW - 40) / count;
       el.style.left = (10 + i * spacing + Math.random() * (spacing * 0.4)) + 'px';
-      el.style.top = (areaH + 50 + Math.random() * 150) + 'px';
+      el.style.top = (areaH + 30 + Math.random() * 100) + 'px';
 
       const body = document.createElement('div');
       body.className = 'balloon-body';
@@ -1357,54 +1430,33 @@ class LearnAndPlay {
       el.appendChild(body);
 
       el.dataset.char = char;
-      el.dataset.speed = (1.2 + Math.random() * 1.0 + this.roundCount * 0.1).toFixed(2);
+      el.dataset.speed = (1.0 + Math.random() * 0.8 + this.roundCount * 0.08).toFixed(2);
       el.dataset.wobble = (Math.random() * 2 * Math.PI).toFixed(2);
-      el.onclick = () => this.tapBalloon(el, targetChar);
+      el.onclick = () => this.tapBalloon(el);
       area.appendChild(el);
       this.balloonList.push(el);
     }
-
-    // Animate balloons floating up
-    this.balloonAnimating = true;
-    let frame = 0;
-    const animate = () => {
-      if (!this.balloonAnimating) return;
-      frame++;
-      let allGone = true;
-      this.balloonList.forEach(b => {
-        if (b.dataset.done) return;
-        const y = parseFloat(b.style.top) - parseFloat(b.dataset.speed);
-        const wobble = Math.sin(frame * 0.03 + parseFloat(b.dataset.wobble)) * 0.8;
-        const x = parseFloat(b.style.left) + wobble;
-        b.style.top = y + 'px';
-        b.style.left = x + 'px';
-        if (y > -120) allGone = false;
-        else b.dataset.done = '1';
-      });
-      if (allGone) {
-        this.resetStreak();
-        this.roundCount++;
-        setTimeout(() => this.nextBalloonRound(), 300);
-        return;
-      }
-      this.animFrame = requestAnimationFrame(animate);
-    };
-    this.animFrame = requestAnimationFrame(animate);
   }
 
-  tapBalloon(el, targetChar) {
+  tapBalloon(el) {
     if (el.dataset.done) return;
     el.dataset.done = '1';
-    if (el.dataset.char === targetChar) {
+    if (el.dataset.char === this.balloonTargetChar) {
       el.classList.add('pop-anim');
       this.playPop();
       this.score++;
       this.addStreak();
       this.roundCount++;
-      this.balloonAnimating = false;
       this.updateScoreDisplay();
-      this.spawnConfetti(10);
-      setTimeout(() => this.nextBalloonRound(), 500);
+      this.spawnConfetti(8);
+      setTimeout(() => el.remove(), 400);
+
+      // Check if we need to change target
+      this.balloonHitsOnTarget++;
+      if (this.balloonHitsOnTarget >= this.balloonHitsNeeded && this.roundCount < this.maxRounds) {
+        // Change target with attention animation
+        setTimeout(() => this.pickBalloonTarget(), 300);
+      }
     } else {
       el.classList.add('wrong-anim');
       this.playWrong();
