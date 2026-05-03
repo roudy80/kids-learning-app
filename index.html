@@ -357,6 +357,43 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
 .sticker-popup h3 { color:var(--grape-purple); font-size:1.4rem; font-weight:700; }
 .sticker-popup .sticker-big { font-size:4rem; margin:15px 0; }
 
+/* -- MEMORY LEVEL BADGE -- */
+.memory-level-badge {
+  background:rgba(255,255,255,.25); color:#fff; padding:4px 14px;
+  border-radius:15px; font-size:clamp(.9rem,3.2vw,1.1rem); font-weight:800;
+}
+
+/* -- SPOT THE DIFFERENCE -- */
+#spotDiffScreen {
+  background:linear-gradient(180deg,#1B5E20 0%,#2E7D32 100%);
+  justify-content:flex-start; padding-top:60px;
+}
+.spot-header {
+  width:100%; display:flex; justify-content:space-between; align-items:center;
+  padding:4px 20px 8px; flex-shrink:0;
+}
+#spotTitle { font-size:clamp(1rem,4vw,1.4rem); font-weight:800; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,.2); }
+#spotProgress { font-size:clamp(1rem,3.5vw,1.3rem); font-weight:700; color:#A5D6A7; }
+.spot-panels {
+  display:flex; gap:8px; padding:0 8px 8px; width:100%; flex:1; min-height:0; overflow:hidden;
+}
+.spot-panel { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; }
+.spot-label { font-size:clamp(.8rem,3vw,1rem); font-weight:700; color:rgba(255,255,255,.85); flex-shrink:0; }
+.spot-panel > div { position:relative; width:100%; flex:1; }
+.spot-panel svg { width:100%; height:100%; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.3); display:block; }
+#spotRight > div { position:relative; }
+.spot-hit-circle {
+  position:absolute; border-radius:50%; border:4px solid #FFD700;
+  background:rgba(255,215,0,.25); pointer-events:none;
+  animation:spotFind .4s ease-out;
+}
+@keyframes spotFind { 0%{transform:translate(-50%,-50%) scale(0);opacity:0} 60%{transform:translate(-50%,-50%) scale(1.3)} 100%{transform:translate(-50%,-50%) scale(1);opacity:1} }
+.spot-miss {
+  position:absolute; pointer-events:none; font-size:1.5rem; color:#FF5252; font-weight:900;
+  transform:translate(-50%,-50%); animation:spotMiss .6s forwards;
+}
+@keyframes spotMiss { 0%{opacity:1;transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-80%) scale(1.4)} }
+
 /* -- RESPONSIVE -- */
 @media (max-height:600px) {
   .game-header { padding-top:50px; }
@@ -404,6 +441,10 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
   <button class="btn btn-game" onclick="app.startGame('pattern')">
     <span class="icon">&#128309;&#128999;&#128309;</span>
     <span class="label"><span>Pattern Builder</span><span>Complete the pattern!</span></span>
+  </button>
+  <button class="btn btn-game" onclick="app.startGame('spot')" style="border-left:4px solid #4CAF50;">
+    <span class="icon">&#128064;</span>
+    <span class="label"><span>Spot the Difference</span><span>Find what changed!</span></span>
   </button>
   <button class="btn btn-game" onclick="app.showDaily()" style="border-left:4px solid var(--bright-orange);">
     <span class="icon">&#11088;</span>
@@ -489,6 +530,7 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
   <button class="btn-back" onclick="app.exitGame()">&#9664; Back</button>
   <div class="game-header">
     <div class="game-score" id="memoryScore">Moves: 0</div>
+    <div class="memory-level-badge" id="memoryLevelDisplay">Level 1</div>
     <div class="streak-display" id="memoryStreak">&#128293; 0</div>
   </div>
   <div class="game-prompt" id="memoryPrompt">Find the pairs!</div>
@@ -497,11 +539,12 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
   </div>
   <div class="result-overlay" id="memoryResult">
     <div class="result-card">
-      <h2 id="memoryResultTitle">Great Job!</h2>
+      <h2 id="memoryResultTitle">Level Clear!</h2>
       <div class="stars" id="memoryResultStars"></div>
       <div class="score-text" id="memoryResultScore"></div>
       <div class="result-buttons">
-        <button class="btn btn-small btn-green" onclick="app.startGame('memory')">Play Again</button>
+        <button class="btn btn-small btn-green" id="memoryNextBtn" onclick="app.nextMemoryLevel()">Next Level &#9654;</button>
+        <button class="btn btn-small btn-orange" onclick="app.restartMemory()">Restart</button>
         <button class="btn btn-small btn-blue" onclick="app.exitGame()">Menu</button>
       </div>
     </div>
@@ -573,6 +616,36 @@ body { background:linear-gradient(135deg,#4FC3F7 0%,#81D4FA 100%); }
   <div class="daily-card" id="dailyCard"></div>
 </div>
 
+<!-- SPOT THE DIFFERENCE -->
+<div id="spotDiffScreen" class="screen">
+  <button class="btn-back" onclick="app.exitGame()">&#9664; Back</button>
+  <div class="spot-header">
+    <div id="spotTitle">Level 1: Farm</div>
+    <div id="spotProgress">0 / 4 found</div>
+  </div>
+  <div class="spot-panels">
+    <div class="spot-panel">
+      <div class="spot-label">Original</div>
+      <div id="spotLeft"></div>
+    </div>
+    <div class="spot-panel">
+      <div class="spot-label">Spot it! &#128064;</div>
+      <div id="spotRight" onclick="app.spotTap(event)"></div>
+    </div>
+  </div>
+  <div class="result-overlay" id="spotResult">
+    <div class="result-card">
+      <h2 id="spotResultTitle">All Found! &#127881;</h2>
+      <div class="stars" id="spotResultStars">&#11088;&#11088;&#11088;</div>
+      <div class="score-text" id="spotResultScore"></div>
+      <div class="result-buttons">
+        <button class="btn btn-small btn-green" id="spotNextBtn" onclick="app.spotNextLevel()">Next Level &#9654;</button>
+        <button class="btn btn-small btn-blue" onclick="app.exitGame()">Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- BOSS BALLOON (global overlay) -->
 <div class="boss-balloon" id="bossBalloon" onclick="app.popBoss()">
   <div class="boss-balloon-body">&#11088;</div>
@@ -599,6 +672,9 @@ class LearnAndPlay {
     this.bossActive = false;
     this.roundCount = 0;
     this.maxRounds = 10;
+    this.memoryLevel = 1;
+    this.spotLevel = 0;
+    this.spotFound = [];
 
     // Sound
     this.audioCtx = null;
@@ -651,10 +727,12 @@ class LearnAndPlay {
       { name:'green', hex:'#228B22' },
     ];
 
-    // Memory icons - using actual unicode emoji for reliable comparison
+    // Memory icons - 24 icons supports up to level 7 (12 pairs)
     this.memoryIcons = [
       '\u{1F436}','\u{1F431}','\u{1F42D}','\u{1F435}','\u{1F981}','\u{1F419}',
-      '\u{1F40C}','\u{1F40B}','\u{1F33B}','\u{1F338}','\u{1F48E}','\u{1F31F}'
+      '\u{1F40C}','\u{1F40B}','\u{1F33B}','\u{1F338}','\u{1F48E}','\u{1F31F}',
+      '\u{1F984}','\u{1F438}','\u{1F98B}','\u{1F40A}','\u{1F43C}','\u{1F422}',
+      '\u{1F680}','\u{1F308}','\u{1F370}','\u{1F367}','\u{1F3CA}','\u{1F369}'
     ];
 
     // Balloon pop data
@@ -896,9 +974,10 @@ class LearnAndPlay {
     if (type === 'shapes') this.startShapes();
     else if (type === 'bugs') this.startBugs();
     else if (type === 'colors') this.startColors();
-    else if (type === 'memory') this.startMemory();
+    else if (type === 'memory') { this.memoryLevel = 1; this.startMemory(); }
     else if (type === 'balloons') this.startBalloons();
     else if (type === 'pattern') this.startPattern();
+    else if (type === 'spot') { this.spotLevel = 0; this.startSpot(); }
   }
 
   // =======================================
@@ -1271,15 +1350,22 @@ class LearnAndPlay {
     this.memoryLocked = false;
     this.streak = 0; this.bestStreak = 0;
 
-    // Create pairs
-    const pairCount = 6;
+    const LEVEL_PAIRS = [0, 3, 4, 5, 6, 8, 10, 12];
+    const LEVEL_COLS  = [0, 3, 4, 5, 4, 4,  5,  6];
+    const level = Math.min(this.memoryLevel || 1, 7);
+    const pairCount = LEVEL_PAIRS[level];
+    const cols = LEVEL_COLS[level];
+
+    const levelEl = document.getElementById('memoryLevelDisplay');
+    if (levelEl) levelEl.textContent = 'Level ' + level;
+
     const icons = [...this.memoryIcons].sort(() => Math.random() - 0.5).slice(0, pairCount);
     const cards = [...icons, ...icons].sort(() => Math.random() - 0.5);
 
     const grid = document.getElementById('bubbleGrid');
-    grid.style.gridTemplateColumns = `repeat(${pairCount <= 6 ? 3 : 4}, 1fr)`;
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     grid.innerHTML = '';
-    document.getElementById('memoryPrompt').textContent = 'Find the pairs!';
+    document.getElementById('memoryPrompt').textContent = 'Find all ' + pairCount + ' pairs!';
 
     cards.forEach((icon, i) => {
       const bubble = document.createElement('div');
@@ -1323,7 +1409,7 @@ class LearnAndPlay {
 
           const total = document.querySelectorAll('#bubbleGrid .bubble').length;
           if (this.memoryMatched >= total) {
-            setTimeout(() => this.endGame('memory'), 500);
+            setTimeout(() => this.endMemoryLevel(), 500);
           }
         }, 300);
       } else {
@@ -1600,6 +1686,128 @@ class LearnAndPlay {
   }
 
   // =======================================
+  //  MEMORY LEVEL PROGRESSION
+  // =======================================
+  endMemoryLevel() {
+    const level = Math.min(this.memoryLevel || 1, 7);
+    const nextBtn = document.getElementById('memoryNextBtn');
+    document.getElementById('memoryResultTitle').textContent = level >= 7 ? '\u{1F3C6} Champion!' : 'Level ' + level + ' Clear!';
+    document.getElementById('memoryResultStars').textContent = '⭐⭐⭐';
+    document.getElementById('memoryResultScore').textContent = 'Finished in ' + this.score + ' moves!';
+    if (nextBtn) nextBtn.style.display = level < 7 ? '' : 'none';
+    document.getElementById('memoryResult').classList.add('active');
+    this.spawnConfetti(12);
+    this.playCorrect();
+    this.stats.totalGames++;
+    this.stats.totalScore += this.score;
+    localStorage.setItem('lp_stats', JSON.stringify(this.stats));
+    if (level >= 3) this.awardSticker();
+  }
+
+  nextMemoryLevel() {
+    this.memoryLevel = Math.min((this.memoryLevel || 1) + 1, 7);
+    document.getElementById('memoryResult').classList.remove('active');
+    this.startMemory();
+  }
+
+  restartMemory() {
+    this.memoryLevel = 1;
+    document.getElementById('memoryResult').classList.remove('active');
+    this.score = 0; this.streak = 0; this.bestStreak = 0; this.roundCount = 0;
+    this.currentGame = 'memory';
+    document.querySelectorAll('.result-overlay').forEach(r => r.classList.remove('active'));
+    this.startMemory();
+  }
+
+  // =======================================
+  //  SPOT THE DIFFERENCE
+  // =======================================
+  startSpot() {
+    this.showScreen('spotDiffScreen');
+    this.currentGame = 'spot';
+    this.spotFound = new Array(SPOT_SCENES[this.spotLevel].diffs).fill(false);
+    this.renderSpotScene();
+  }
+
+  renderSpotScene() {
+    const scene = SPOT_SCENES[this.spotLevel];
+    document.getElementById('spotTitle').textContent = 'Level ' + (this.spotLevel + 1) + ': ' + scene.name;
+    document.getElementById('spotProgress').textContent = '0 / ' + scene.diffs + ' found';
+    document.getElementById('spotResult').classList.remove('active');
+    document.getElementById('spotLeft').innerHTML = '<div style="position:relative;width:100%">' + scene.svgLeft() + '</div>';
+    const rightWrap = document.createElement('div');
+    rightWrap.style.cssText = 'position:relative;width:100%';
+    rightWrap.innerHTML = scene.svgRight();
+    const rightDiv = document.getElementById('spotRight');
+    rightDiv.innerHTML = '';
+    rightDiv.appendChild(rightWrap);
+    this.spotFound.forEach((found, i) => { if (found) this._showSpotCircle(i, scene.areas[i], rightWrap); });
+  }
+
+  spotTap(e) {
+    const scene = SPOT_SCENES[this.spotLevel];
+    const rightDiv = document.getElementById('spotRight').firstChild;
+    if (!rightDiv) return;
+    const rect = rightDiv.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    let hit = false;
+    scene.areas.forEach((area, i) => {
+      if (this.spotFound[i]) return;
+      const dx = x - area[0], dy = y - area[1];
+      if (Math.sqrt(dx*dx + dy*dy) < area[2]) {
+        this.spotFound[i] = true;
+        hit = true;
+        this._showSpotCircle(i, area, rightDiv);
+        this.playCorrect();
+        this.spawnConfetti(4);
+        const found = this.spotFound.filter(Boolean).length;
+        document.getElementById('spotProgress').textContent = found + ' / ' + scene.diffs + ' found';
+        if (found === scene.diffs) setTimeout(() => this._spotComplete(), 700);
+      }
+    });
+    if (!hit) {
+      const miss = document.createElement('div');
+      miss.className = 'spot-miss';
+      miss.textContent = '✗';
+      miss.style.cssText = 'left:' + (x*100) + '%;top:' + (y*100) + '%;';
+      rightDiv.appendChild(miss);
+      setTimeout(() => miss.remove(), 700);
+      this.playWrong();
+    }
+  }
+
+  _showSpotCircle(i, area, container) {
+    if (document.getElementById('sc-' + i)) return;
+    const el = document.createElement('div');
+    el.id = 'sc-' + i;
+    el.className = 'spot-hit-circle';
+    const sz = area[2] * 2 * 100;
+    el.style.cssText = 'left:' + (area[0]*100) + '%;top:' + (area[1]*100) + '%;width:' + sz + '%;padding-bottom:' + sz + '%;';
+    container.appendChild(el);
+  }
+
+  _spotComplete() {
+    const scene = SPOT_SCENES[this.spotLevel];
+    const isLast = this.spotLevel >= SPOT_SCENES.length - 1;
+    document.getElementById('spotResultTitle').textContent = isLast ? '\u{1F3C6} You Won!' : 'Level ' + (this.spotLevel + 1) + ' Clear! \u{1F389}';
+    document.getElementById('spotResultStars').textContent = '⭐⭐⭐';
+    document.getElementById('spotResultScore').textContent = 'Found all ' + scene.diffs + ' differences!';
+    const btn = document.getElementById('spotNextBtn');
+    if (btn) btn.style.display = isLast ? 'none' : '';
+    document.getElementById('spotResult').classList.add('active');
+    this.spawnConfetti(16);
+    this.playCorrect();
+  }
+
+  spotNextLevel() {
+    this.spotLevel++;
+    this.spotFound = new Array(SPOT_SCENES[this.spotLevel].diffs).fill(false);
+    document.getElementById('spotResult').classList.remove('active');
+    this.renderSpotScene();
+  }
+
+  // =======================================
   //  DAILY CHALLENGE
   // =======================================
   showDaily() {
@@ -1656,6 +1864,58 @@ class LearnAndPlay {
     this.isDailyChallenge = false;
   }
 }
+
+// ── Spot the Difference Scene Data ───────────────────────────────────────────
+function _farmSVG(r) {
+  const barn = r ? '#2255CC' : '#CC2200';
+  const barnTop = r ? '#1A3A88' : '#8B0000';
+  const flower = r ? '#FF85A1' : '#FFD700';
+  const cloud = r ? '' : `<ellipse cx="52" cy="55" rx="35" ry="22" fill="white" opacity=".9"/><ellipse cx="72" cy="44" rx="28" ry="22" fill="white" opacity=".9"/><ellipse cx="40" cy="50" rx="22" ry="16" fill="white" opacity=".9"/>`;
+  const rays = r ? '' : `<line x1="340" y1="15" x2="340" y2="5" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="340" y1="84" x2="340" y2="94" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="305" y1="49" x2="295" y2="49" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="375" y1="49" x2="385" y2="49" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="316" y1="25" x2="308" y2="17" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="364" y1="25" x2="372" y2="17" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="316" y1="74" x2="308" y2="82" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/><line x1="364" y1="74" x2="372" y2="82" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;display:block;width:100%;height:auto">${rays}<rect width="400" height="195" fill="#87CEEB"/><rect y="195" width="400" height="105" fill="#5D8A3C"/>${cloud}<circle cx="340" cy="49" r="33" fill="#FFD700"/><rect x="150" y="88" width="100" height="107" fill="${barn}"/><polygon points="145,92 200,48 255,92" fill="${barnTop}"/><rect x="183" y="155" width="34" height="40" fill="#4A2800" rx="3"/><rect x="199" y="155" width="3" height="40" fill="#2A1800"/><rect x="183" y="172" width="34" height="3" fill="#2A1800"/><rect x="30" y="165" width="18" height="70" fill="#8B4513"/><circle cx="39" cy="148" r="52" fill="#2E8B20"/><circle cx="39" cy="122" r="10" fill="#FF3333"/><circle cx="19" cy="140" r="9" fill="#FF3333"/><circle cx="59" cy="140" r="9" fill="#FF3333"/><rect x="0" y="195" width="140" height="10" fill="#C4A265" rx="3"/><rect x="260" y="195" width="140" height="10" fill="#C4A265" rx="3"/><rect x="10" y="183" width="10" height="28" fill="#C4A265" rx="2"/><rect x="42" y="183" width="10" height="28" fill="#C4A265" rx="2"/><rect x="74" y="183" width="10" height="28" fill="#C4A265" rx="2"/><rect x="270" y="183" width="10" height="28" fill="#C4A265" rx="2"/><rect x="330" y="183" width="10" height="28" fill="#C4A265" rx="2"/><line x1="315" y1="215" x2="315" y2="255" stroke="#2E7D32" stroke-width="5"/><ellipse cx="315" cy="203" rx="17" ry="13" fill="${flower}"/><ellipse cx="315" cy="189" rx="13" ry="10" fill="${flower}"/><ellipse cx="302" cy="198" rx="10" ry="13" fill="${flower}"/><ellipse cx="328" cy="198" rx="10" ry="13" fill="${flower}"/><circle cx="315" cy="200" r="10" fill="#FFF176"/><rect x="176" y="198" width="48" height="102" fill="#C8A455" rx="3"/></svg>`;
+}
+function _oceanSVG(r) {
+  const sunR = r ? 22 : 35;
+  const fish2 = r ? '' : `<ellipse cx="282" cy="210" rx="22" ry="13" fill="#FF9800"/><polygon points="260,210 250,200 250,220" fill="#E07000"/><circle cx="276" cy="206" r="3" fill="#333"/>`;
+  const crab = r ? '#FF8800' : '#FF4444';
+  const crabD = r ? '#CC5500' : '#CC0000';
+  const sw3 = r ? '' : `<path d="M56,300 Q69,268 56,248 Q43,228 56,208" stroke="#1E8B1E" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  const star = r ? '' : `<g transform="translate(180,282)"><polygon points="0,-14 4,-4 14,-4 6,3 9,12 0,6 -9,12 -6,3 -14,-4 -4,-4" fill="#FF9A3C"/></g>`;
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;display:block;width:100%;height:auto"><rect width="400" height="148" fill="#87CEEB"/><rect y="148" width="400" height="152" fill="#1A6B9E"/><ellipse cx="200" cy="148" rx="400" ry="22" fill="#1F7AB0"/><circle cx="50" cy="55" r="${sunR}" fill="#FFD700"/><ellipse cx="180" cy="78" rx="58" ry="28" fill="white" opacity=".85"/><ellipse cx="225" cy="70" rx="44" ry="26" fill="white" opacity=".85"/><ellipse cx="200" cy="185" rx="34" ry="17" fill="#FF8C42"/><polygon points="166,185 152,175 152,195" fill="#E07030"/><circle cx="192" cy="181" r="4" fill="#333"/><line x1="210" y1="176" x2="210" y2="168" stroke="#FF8C42" stroke-width="2"/><line x1="217" y1="178" x2="221" y2="170" stroke="#FF8C42" stroke-width="2"/>${fish2}<ellipse cx="130" cy="215" rx="22" ry="12" fill="#4DD0E1"/><polygon points="108,215 96,207 96,223" fill="#3BC0D0"/><circle cx="124" cy="211" r="3" fill="#333"/><g transform="translate(312,262)"><ellipse rx="22" ry="16" fill="${crab}"/><ellipse cy="-9" rx="14" ry="8" fill="${crab}"/><circle cx="-7" cy="-13" r="4" fill="white"/><circle cx="7" cy="-13" r="4" fill="white"/><circle cx="-7" cy="-13" r="2" fill="#333"/><circle cx="7" cy="-13" r="2" fill="#333"/><line x1="-22" y1="0" x2="-36" y2="-12" stroke="${crabD}" stroke-width="3" stroke-linecap="round"/><line x1="-22" y1="7" x2="-38" y2="7" stroke="${crabD}" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="0" x2="36" y2="-12" stroke="${crabD}" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="7" x2="38" y2="7" stroke="${crabD}" stroke-width="3" stroke-linecap="round"/></g><path d="M28,300 Q40,268 28,248 Q16,228 28,208" stroke="#1E8B1E" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M44,300 Q57,264 44,242 Q31,220 44,200" stroke="#2A9B2A" stroke-width="5" fill="none" stroke-linecap="round"/>${sw3}${star}<path d="M342,300 Q355,268 342,248 Q329,228 342,208" stroke="#2A9B2A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M360,300 Q372,272 360,254 Q348,236 360,220" stroke="#1E8B1E" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`;
+}
+function _spaceSVG(r) {
+  const rings = r ? '' : `<ellipse cx="132" cy="160" rx="95" ry="18" fill="none" stroke="#C0A060" stroke-width="8" opacity=".75"/>`;
+  const rc = r ? '#4499FF' : '#FF4444';
+  const rd = r ? '#2266CC' : '#CC1111';
+  const s5 = r ? '' : `<polygon points="220,60 223,70 233,70 225,76 228,87 220,81 212,87 215,76 207,70 217,70" fill="#FFD700"/>`;
+  const moonMask = r ? `<circle cx="373" cy="47" r="24" fill="#0D1B2A"/>` : '';
+  const eye2 = r ? '' : `<circle cx="354" cy="218" r="5" fill="#00FF88"/>`;
+  const aster = r ? `<g transform="translate(80,62)"><ellipse rx="15" ry="12" fill="#7B6A5A" transform="rotate(-20)"/><circle cx="-5" cy="-3" r="3" fill="#5A4A3A"/><circle cx="5" cy="4" r="2" fill="#5A4A3A"/></g>` : '';
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;display:block;width:100%;height:auto"><rect width="400" height="300" fill="#0D1B2A"/>${aster}<circle cx="40" cy="28" r="2" fill="white" opacity=".9"/><circle cx="92" cy="82" r="1.5" fill="white" opacity=".8"/><circle cx="162" cy="22" r="2.5" fill="white"/><circle cx="292" cy="38" r="1.5" fill="white" opacity=".9"/><circle cx="262" cy="95" r="2" fill="white" opacity=".7"/><circle cx="352" cy="124" r="1.5" fill="white" opacity=".8"/><circle cx="182" cy="115" r="1.5" fill="white" opacity=".6"/>${s5}<polygon points="132,90 139,112 162,112 143,126 150,148 132,134 114,148 121,126 102,112 125,112" fill="#BC8CFF" opacity=".85"/><circle cx="132" cy="160" r="70" fill="#9B59B6"/><ellipse cx="112" cy="145" rx="30" ry="20" fill="#7D3C98" opacity=".5"/>${rings}<circle cx="360" cy="48" r="26" fill="#F5F5DC"/><circle cx="360" cy="48" r="20" fill="#E0E0B0"/>${moonMask}<g transform="translate(300,118)"><rect x="-10" y="0" width="20" height="62" rx="8" fill="${rc}"/><ellipse cy="0" rx="12" ry="18" fill="${rd}"/><rect x="-3" y="24" width="6" height="18" rx="3" fill="#87CEEB" opacity=".9"/><polygon points="-10,56 -20,78 -10,73" fill="${rd}"/><polygon points="10,56 20,78 10,73" fill="${rd}"/><ellipse cx="0" cy="70" rx="8" ry="12" fill="#FF8C00" opacity=".8"/><ellipse cx="0" cy="70" rx="4" ry="8" fill="#FFD700" opacity=".9"/></g><g transform="translate(340,232)"><ellipse rx="22" ry="26" fill="#4CAF50"/><ellipse cy="-15" rx="12" ry="14" fill="#4CAF50"/><ellipse cx="-22" cy="-28" rx="8" ry="4" fill="#4CAF50" transform="rotate(-30 -22 -28)"/><ellipse cx="22" cy="-28" rx="8" ry="4" fill="#4CAF50" transform="rotate(30 22 -28)"/><circle cx="-8" cy="-18" r="5" fill="white"/><circle cx="-8" cy="-18" r="2.5" fill="#00FF88"/>${eye2}</g></svg>`;
+}
+
+const SPOT_SCENES = [
+  {
+    name: 'Farm', diffs: 4,
+    // areas: [cx, cy, r] as fractions of the rendered SVG width/height
+    areas: [[0.85,0.16,0.11],[0.14,0.18,0.10],[0.50,0.44,0.13],[0.79,0.68,0.10]],
+    svgLeft:  () => _farmSVG(false),
+    svgRight: () => _farmSVG(true),
+  },
+  {
+    name: 'Ocean', diffs: 5,
+    areas: [[0.13,0.18,0.11],[0.71,0.70,0.10],[0.78,0.87,0.10],[0.13,0.83,0.09],[0.45,0.95,0.09]],
+    svgLeft:  () => _oceanSVG(false),
+    svgRight: () => _oceanSVG(true),
+  },
+  {
+    name: 'Space', diffs: 6,
+    areas: [[0.33,0.53,0.14],[0.75,0.40,0.11],[0.55,0.20,0.08],[0.90,0.16,0.10],[0.85,0.73,0.09],[0.20,0.21,0.09]],
+    svgLeft:  () => _spaceSVG(false),
+    svgRight: () => _spaceSVG(true),
+  },
+];
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Patch endGame to include daily check
 const _origEnd = LearnAndPlay.prototype.endGame;
